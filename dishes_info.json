@@ -1,0 +1,402 @@
+{
+  "Banh chung": {
+    "ten_tieng_viet": "Bánh chưng",
+    "mo_ta": "Bánh chưng là biểu tượng ẩm thực Tết Nguyên Đán của người Việt, đặc biệt miền Bắc. Bánh có hình vuông, tượng trưng cho đất, được gói bằng lá dong với nhân gạo nếp, đậu xanh và thịt lợn.",
+    "nguon_goc": "Truyền thuyết Lang Liêu, có từ thời Hùng Vương",
+    "nguyen_lieu": [
+      "Gạo nếp",
+      "Đậu xanh",
+      "Thịt lợn ba chỉ",
+      "Lá dong",
+      "Hạt tiêu",
+      "Hành khô"
+    ],
+    "cach_thuong_thuc": "Ăn kèm dưa hành, giò lụa. Có thể ăn nóng hoặc nguội, rán lại cho giòn.",
+    "huong_vi": "Bùi béo, thơm mùi lá dong, vị mặn nhẹ từ nhân thịt",
+    "calo_uoc_tinh": "250 kcal/100g",
+    "dia_chi_noi_tieng": [
+      "Bánh chưng Bà Thìn - Hàng Than, Hà Nội",
+      "Bánh chưng làng Tranh Khúc - Thanh Trì, Hà Nội",
+      "Bánh chưng Bờ Đậu - Thái Nguyên"
+    ]
+  },
+  "Banh cuon": {
+    "ten_tieng_viet": "Bánh cuốn",
+    "mo_ta": "Bánh cuốn là món ăn truyền thống Hà Nội, làm từ bột gạo tráng mỏng, cuốn nhân thịt lợn băm và mộc nhĩ. Ăn kèm chả quế, rau thơm và nước mắm chua ngọt.",
+    "nguon_goc": "Hà Nội, Thanh Trì (nổi tiếng nhất)",
+    "nguyen_lieu": [
+      "Bột gạo",
+      "Thịt lợn băm",
+      "Mộc nhĩ",
+      "Hành khô phi",
+      "Chả quế",
+      "Nước mắm"
+    ],
+    "cach_thuong_thuc": "Ăn nóng ngay khi tráng, chấm nước mắm pha chua ngọt, kèm chả quế và rau thơm.",
+    "huong_vi": "Thanh nhẹ, mềm mịn, vị bùi từ hành phi, thơm chả quế",
+    "calo_uoc_tinh": "120 kcal/100g",
+    "dia_chi_noi_tieng": [
+      "Bánh cuốn Thanh Trì - Hà Nội",
+      "Bánh cuốn Bà Hoành - Tô Hiến Thành, Hà Nội",
+      "Bánh cuốn gia truyền 14 Hàng Gà - Hà Nội"
+    ]
+  },
+  "Banh da cua": {
+    "ten_tieng_viet": "Bánh đa cua",
+    "mo_ta": "Bánh đa cua là đặc sản Hải Phòng, gồm sợi bánh đa đỏ (nhuộm gấc) ăn với nước dùng cua đồng, rau muống, chả lá lốt và mắm tôm.",
+    "nguon_goc": "Hải Phòng",
+    "nguyen_lieu": [
+      "Bánh đa đỏ",
+      "Cua đồng",
+      "Rau muống",
+      "Chả lá lốt",
+      "Mắm tôm",
+      "Hành lá",
+      "Rau rút"
+    ],
+    "cach_thuong_thuc": "Ăn nóng, thêm mắm tôm, ớt, chanh tùy khẩu vị. Rau muống luộc ăn kèm.",
+    "huong_vi": "Nước dùng ngọt thanh từ cua, sợi bánh đa dai, vị đậm đà",
+    "calo_uoc_tinh": "180 kcal/tô",
+    "dia_chi_noi_tieng": [
+      "Bánh đa cua bà Cụ - chợ Lương Văn Can, Hải Phòng",
+      "Bánh đa cua Cầu Đất - Hải Phòng",
+      "Bánh đa cua phố Lý Quốc Sư - Hà Nội"
+    ]
+  },
+  "Banh duc": {
+    "ten_tieng_viet": "Bánh đúc",
+    "mo_ta": "Bánh đúc là món ăn dân dã miền Bắc, làm từ bột gạo nấu đông thành khối mềm. Có hai loại: bánh đúc nóng (ăn với thịt bằm, mộc nhĩ) và bánh đúc lạc (nguội, chấm tương).",
+    "nguon_goc": "Đồng bằng Bắc Bộ",
+    "nguyen_lieu": [
+      "Bột gạo",
+      "Lạc rang",
+      "Nước vôi trong",
+      "Thịt lợn băm",
+      "Mộc nhĩ",
+      "Hành phi"
+    ],
+    "cach_thuong_thuc": "Bánh đúc nóng ăn với nước dùng thịt bằm. Bánh đúc nguội thái miếng chấm mắm tôm hoặc tương bần.",
+    "huong_vi": "Mềm mịn, thanh mát, bùi bùi vị lạc",
+    "calo_uoc_tinh": "100 kcal/100g",
+    "dia_chi_noi_tieng": [
+      "Bánh đúc nóng phố Lê Ngọc Hân - Hà Nội",
+      "Bánh đúc chợ Đồng Xuân - Hà Nội",
+      "Bánh đúc làng Mơ - Hà Nội"
+    ]
+  },
+  "Banh gai": {
+    "ten_tieng_viet": "Bánh gai",
+    "mo_ta": "Bánh gai là đặc sản truyền thống miền Bắc, có màu đen đặc trưng do lá gai. Vỏ bánh dẻo mịn, nhân đậu xanh trộn dừa sợi, mứt bí. Thường dùng làm quà biếu.",
+    "nguon_goc": "Nam Định, Hà Nam (nổi tiếng nhất)",
+    "nguyen_lieu": [
+      "Bột nếp",
+      "Lá gai",
+      "Đậu xanh",
+      "Dừa sợi",
+      "Mứt bí",
+      "Mỡ lợn",
+      "Lá chuối"
+    ],
+    "cach_thuong_thuc": "Ăn nguội hoặc hấp lại cho nóng. Thường dùng kèm trà nóng.",
+    "huong_vi": "Dẻo thơm, ngọt nhẹ, mùi lá gai đặc trưng",
+    "calo_uoc_tinh": "200 kcal/chiếc",
+    "dia_chi_noi_tieng": [
+      "Bánh gai Bà Thi - Nam Định",
+      "Bánh gai làng Dầu - Ninh Bình",
+      "Bánh gai phố Hàng Chiếu - Hà Nội"
+    ]
+  },
+  "Banh gio": {
+    "ten_tieng_viet": "Bánh giò",
+    "mo_ta": "Bánh giò là món ăn sáng quen thuộc của người Hà Nội. Vỏ bánh làm từ bột gạo tẻ, nhân thịt lợn băm trộn mộc nhĩ, hành, nấm hương, gói lá chuối thành hình chóp.",
+    "nguon_goc": "Hà Nội",
+    "nguyen_lieu": [
+      "Bột gạo tẻ",
+      "Thịt lợn nạc",
+      "Mộc nhĩ",
+      "Nấm hương",
+      "Hành khô",
+      "Nước mắm",
+      "Lá chuối"
+    ],
+    "cach_thuong_thuc": "Ăn nóng ngay khi hấp xong, có thể chấm tương ớt hoặc nước mắm.",
+    "huong_vi": "Vỏ mềm mịn, nhân đậm đà thơm mùi nấm hương",
+    "calo_uoc_tinh": "180 kcal/chiếc",
+    "dia_chi_noi_tieng": [
+      "Bánh giò phố Hàng Bông - Hà Nội",
+      "Bánh giò chợ Châu Long - Hà Nội",
+      "Bánh giò 29 Hàng Than - Hà Nội"
+    ]
+  },
+  "Banh mi": {
+    "ten_tieng_viet": "Bánh mì",
+    "mo_ta": "Bánh mì Việt Nam là sự kết hợp hoàn hảo giữa vỏ bánh giòn kiểu Pháp và nhân đa dạng. Phiên bản miền Bắc thường có pate, chả lụa, ruốc, dưa chuột, rau mùi.",
+    "nguon_goc": "Ảnh hưởng từ Pháp, phát triển tại Việt Nam",
+    "nguyen_lieu": [
+      "Vỏ bánh mì",
+      "Pate gan",
+      "Chả lụa",
+      "Ruốc thịt",
+      "Dưa chuột",
+      "Rau mùi",
+      "Ớt",
+      "Nước tương"
+    ],
+    "cach_thuong_thuc": "Ăn nóng giòn, kẹp nhiều nhân. Phổ biến làm bữa sáng hoặc ăn vặt.",
+    "huong_vi": "Vỏ giòn, nhân đa dạng vị béo bùi, chua nhẹ",
+    "calo_uoc_tinh": "300 kcal/ổ",
+    "dia_chi_noi_tieng": [
+      "Bánh mì Phố Cổ - 52 Lý Quốc Sư, Hà Nội",
+      "Bánh mì 25 Hàng Cá - Hà Nội",
+      "Bánh mì Lâm - 38 Hàng Trống, Hà Nội"
+    ]
+  },
+  "Banh tom Ho Tay": {
+    "ten_tieng_viet": "Bánh tôm Hồ Tây",
+    "mo_ta": "Bánh tôm Hồ Tây là đặc sản nổi tiếng vùng hồ Tây, Hà Nội. Tôm tươi nguyên con được phủ bột và chiên giòn vàng ruộm, ăn kèm rau sống và nước mắm chua ngọt.",
+    "nguon_goc": "Hồ Tây, Hà Nội",
+    "nguyen_lieu": [
+      "Tôm hồ tươi",
+      "Bột mì",
+      "Bột gạo",
+      "Khoai lang",
+      "Rau sống",
+      "Nước mắm chua ngọt"
+    ],
+    "cach_thuong_thuc": "Ăn nóng ngay khi chiên, cuốn rau sống, chấm nước mắm pha ớt tỏi.",
+    "huong_vi": "Giòn rụm, ngọt tôm, thơm bột chiên",
+    "calo_uoc_tinh": "250 kcal/đĩa",
+    "dia_chi_noi_tieng": [
+      "Bánh tôm Hồ Tây - Thanh Niên, Hà Nội",
+      "Quán bánh tôm bà Phúc - Tây Hồ, Hà Nội"
+    ]
+  },
+  "Bun cha": {
+    "ten_tieng_viet": "Bún chả",
+    "mo_ta": "Bún chả là tinh hoa ẩm thực Hà Nội, gồm bún trắng ăn kèm chả thịt lợn nướng (viên và miếng) trong bát nước mắm chua ngọt pha đu đủ, cà rốt. Món ăn Obama từng thưởng thức tại Hà Nội.",
+    "nguon_goc": "Hà Nội",
+    "nguyen_lieu": [
+      "Bún tươi",
+      "Thịt lợn ba chỉ",
+      "Thịt nạc vai",
+      "Nước mắm",
+      "Đường",
+      "Giấm",
+      "Đu đủ xanh",
+      "Rau sống"
+    ],
+    "cach_thuong_thuc": "Nhúng bún vào bát nước chấm có chả, ăn kèm rau sống và nem cua bể.",
+    "huong_vi": "Thịt nướng thơm lừng, nước chấm chua ngọt hài hòa",
+    "calo_uoc_tinh": "450 kcal/suất",
+    "dia_chi_noi_tieng": [
+      "Bún chả Hương Liên (Obama) - 24 Lê Văn Hưu, Hà Nội",
+      "Bún chả Đắc Kim - 1 Hàng Mành, Hà Nội",
+      "Bún chả 34 Hàng Than - Hà Nội"
+    ]
+  },
+  "Bun dau mam tom": {
+    "ten_tieng_viet": "Bún đậu mắm tôm",
+    "mo_ta": "Bún đậu mắm tôm là món ăn dân dã phổ biến miền Bắc, gồm bún lá thái miếng, đậu phụ chiên vàng, chả cốm, lòng dồi, ăn kèm mắm tôm đánh sủi bọt với chanh ớt.",
+    "nguon_goc": "Hà Nội",
+    "nguyen_lieu": [
+      "Bún lá",
+      "Đậu phụ",
+      "Mắm tôm",
+      "Chả cốm",
+      "Lòng lợn",
+      "Rau kinh giới",
+      "Tía tô",
+      "Chanh",
+      "Ớt"
+    ],
+    "cach_thuong_thuc": "Chấm bún và đậu vào mắm tôm đã đánh bông, ăn kèm rau thơm, kinh giới.",
+    "huong_vi": "Đậm đà mắm tôm, béo đậu rán, thơm rau thơm",
+    "calo_uoc_tinh": "500 kcal/suất",
+    "dia_chi_noi_tieng": [
+      "Bún đậu Hàng Khay - Hà Nội",
+      "Bún đậu mắm tôm phố Phạm Hồng Thái - Hà Nội",
+      "Bún đậu Homemade - Tô Hiến Thành, Hà Nội"
+    ]
+  },
+  "Bun rieu": {
+    "ten_tieng_viet": "Bún riêu",
+    "mo_ta": "Bún riêu cua là món bún nước truyền thống miền Bắc, nổi bật với nước dùng cua đồng chua nhẹ từ cà chua, riêu cua nổi trên mặt, ăn kèm đậu rán, rau sống.",
+    "nguon_goc": "Đồng bằng Bắc Bộ",
+    "nguyen_lieu": [
+      "Bún tươi",
+      "Cua đồng",
+      "Cà chua",
+      "Đậu phụ rán",
+      "Mắm tôm",
+      "Giấm bỗng",
+      "Rau sống",
+      "Hành lá"
+    ],
+    "cach_thuong_thuc": "Ăn nóng, thêm mắm tôm, chanh, ớt. Có thể thêm giấm bỗng cho vị chua đặc trưng.",
+    "huong_vi": "Nước dùng chua ngọt tự nhiên, gạch cua béo ngậy",
+    "calo_uoc_tinh": "350 kcal/tô",
+    "dia_chi_noi_tieng": [
+      "Bún riêu cua - 11 Hàng Bông, Hà Nội",
+      "Bún riêu Cầu Gỗ - Hà Nội",
+      "Bún riêu chợ Đồng Xuân - Hà Nội"
+    ]
+  },
+  "Bun thang": {
+    "ten_tieng_viet": "Bún thang",
+    "mo_ta": "Bún thang là món bún tinh tế bậc nhất Hà Nội, với nước dùng trong vắt nấu từ xương gà, tôm he. Topping gồm thịt gà xé, giò lụa thái chỉ, trứng tráng thái sợi, tôm he, rau răm.",
+    "nguon_goc": "Hà Nội (thường nấu sau Tết)",
+    "nguyen_lieu": [
+      "Bún tươi",
+      "Gà ta",
+      "Giò lụa",
+      "Trứng gà",
+      "Tôm he",
+      "Rau răm",
+      "Mắm tôm",
+      "Nấm hương"
+    ],
+    "cach_thuong_thuc": "Ăn nóng, thêm chút mắm tôm loãng, tinh dầu cà cuống (nếu có).",
+    "huong_vi": "Nước dùng thanh ngọt, nhiều tầng vị từ các loại topping",
+    "calo_uoc_tinh": "380 kcal/tô",
+    "dia_chi_noi_tieng": [
+      "Bún thang Bà Đức - 48 Cầu Gỗ, Hà Nội",
+      "Bún thang phố Hàng Hom - Hà Nội",
+      "Bún thang 29 Hàng Lược - Hà Nội"
+    ]
+  },
+  "Cha ca La Vong": {
+    "ten_tieng_viet": "Chả cá Lã Vọng",
+    "mo_ta": "Chả cá Lã Vọng là đặc sản hơn 100 năm tuổi của Hà Nội. Cá lăng hoặc cá quả ướp nghệ, mẻ, được nướng và chiên trên chảo mỡ sôi ngay tại bàn ăn, ăn kèm bún, rau thì là, hành.",
+    "nguon_goc": "Phố Chả Cá (Hàng Sơn cũ), Hà Nội, từ thế kỷ 19",
+    "nguyen_lieu": [
+      "Cá lăng/cá quả",
+      "Nghệ",
+      "Mẻ",
+      "Thì là",
+      "Hành lá",
+      "Bún",
+      "Mắm tôm",
+      "Đậu phộng rang"
+    ],
+    "cach_thuong_thuc": "Cá chiên sôi trên bàn, gắp ra bát bún, thêm rau thì là, hành, lạc rang, chấm mắm tôm.",
+    "huong_vi": "Cá thơm nghệ, béo ngậy, hương thì là đặc trưng",
+    "calo_uoc_tinh": "400 kcal/suất",
+    "dia_chi_noi_tieng": [
+      "Chả cá Lã Vọng - 14 Chả Cá, Hà Nội",
+      "Chả cá Thăng Long - 19-21-31 Đường Thành, Hà Nội",
+      "Chả cá Anh Vũ - 120 K Bạch Mai, Hà Nội"
+    ]
+  },
+  "Chao long": {
+    "ten_tieng_viet": "Cháo lòng",
+    "mo_ta": "Cháo lòng là món cháo nấu từ gạo với nội tạng lợn (lòng, dồi, tim, gan), ăn kèm quẩy, hành phi, tiêu. Món ăn sáng bình dân nhưng bổ dưỡng, phổ biến khắp miền Bắc.",
+    "nguon_goc": "Đồng bằng Bắc Bộ",
+    "nguyen_lieu": [
+      "Gạo tẻ",
+      "Lòng lợn các loại",
+      "Tiết lợn",
+      "Hành lá",
+      "Hành phi",
+      "Tiêu",
+      "Quẩy",
+      "Rau mùi"
+    ],
+    "cach_thuong_thuc": "Ăn nóng, rắc tiêu, hành phi, bẻ quẩy ăn kèm. Thêm ớt, chanh tùy khẩu vị.",
+    "huong_vi": "Cháo nóng mềm nhuyễn, lòng giòn sần sật, thơm hành phi",
+    "calo_uoc_tinh": "280 kcal/tô",
+    "dia_chi_noi_tieng": [
+      "Cháo lòng phố Lý Quốc Sư - Hà Nội",
+      "Cháo lòng Tô Hiệu - Hà Nội",
+      "Cháo lòng chợ Đồng Xuân - Hà Nội"
+    ]
+  },
+  "Com rang dua bo": {
+    "ten_tieng_viet": "Cơm rang dưa bò",
+    "mo_ta": "Cơm rang dưa bò là đặc sản bình dân Hà Nội, cơm nguội rang với thịt bò xào và dưa cải muối chua. Sự kết hợp giữa vị chua dưa và ngọt thịt bò tạo nên hương vị độc đáo.",
+    "nguon_goc": "Hà Nội",
+    "nguyen_lieu": [
+      "Cơm nguội",
+      "Thịt bò",
+      "Dưa cải muối",
+      "Hành lá",
+      "Tỏi",
+      "Nước mắm",
+      "Trứng gà"
+    ],
+    "cach_thuong_thuc": "Ăn nóng ngay khi rang xong, kèm bát canh nóng. Có thể thêm trứng ốp la.",
+    "huong_vi": "Cơm tơi thơm, thịt bò mềm, dưa chua thanh nhẹ",
+    "calo_uoc_tinh": "400 kcal/đĩa",
+    "dia_chi_noi_tieng": [
+      "Cơm rang dưa bò phố Bát Đàn - Hà Nội",
+      "Cơm rang dưa bò 59 Mã Mây - Hà Nội",
+      "Cơm rang Thịnh - Lương Văn Can, Hà Nội"
+    ]
+  },
+  "Nem chua": {
+    "ten_tieng_viet": "Nem chua",
+    "mo_ta": "Nem chua là món ăn lên men truyền thống, làm từ thịt lợn nạc giã nhuyễn trộn bì lợn thái chỉ, gói lá chuối ủ cho lên men tự nhiên. Vị chua thanh, dai giòn.",
+    "nguon_goc": "Thanh Hóa, Hà Nội (phiên bản miền Bắc)",
+    "nguyen_lieu": [
+      "Thịt lợn nạc",
+      "Bì lợn",
+      "Tỏi",
+      "Ớt",
+      "Lá ổi",
+      "Lá chuối",
+      "Hạt tiêu"
+    ],
+    "cach_thuong_thuc": "Ăn trực tiếp kèm lá ổi, tỏi, ớt. Dùng làm mồi nhậu hoặc ăn vặt.",
+    "huong_vi": "Chua nhẹ, dai giòn, cay nồng tỏi ớt",
+    "calo_uoc_tinh": "150 kcal/100g",
+    "dia_chi_noi_tieng": [
+      "Nem chua Thanh Hóa (thương hiệu gốc)",
+      "Nem chua làng Vẽ - Hà Nội",
+      "Nem chua phố Hàng Bông - Hà Nội"
+    ]
+  },
+  "Pho": {
+    "ten_tieng_viet": "Phở",
+    "mo_ta": "Phở là biểu tượng ẩm thực Việt Nam, đặc biệt phở Hà Nội với nước dùng trong, ngọt xương, bánh phở mềm, thịt bò tái/chín. Phở Bắc nổi tiếng thanh nhẹ, ít gia vị hơn phở Nam.",
+    "nguon_goc": "Nam Định - Hà Nội (đầu thế kỷ 20)",
+    "nguyen_lieu": [
+      "Bánh phở",
+      "Xương bò",
+      "Thịt bò",
+      "Hành tây",
+      "Gừng",
+      "Hoa hồi",
+      "Quế",
+      "Thảo quả",
+      "Hành lá"
+    ],
+    "cach_thuong_thuc": "Ăn nóng, thêm quẩy, chanh, ớt, giấm tỏi. Phở Bắc ít rau sống hơn phở Nam.",
+    "huong_vi": "Nước dùng thanh ngọt, thơm gia vị, bánh phở mềm mịn",
+    "calo_uoc_tinh": "380 kcal/tô",
+    "dia_chi_noi_tieng": [
+      "Phở Thìn - 13 Lò Đúc, Hà Nội",
+      "Phở Bát Đàn - 49 Bát Đàn, Hà Nội",
+      "Phở Lý Quốc Sư - 10 Lý Quốc Sư, Hà Nội"
+    ]
+  },
+  "Xoi xeo": {
+    "ten_tieng_viet": "Xôi xéo",
+    "mo_ta": "Xôi xéo là món ăn sáng quen thuộc Hà Nội, gạo nếp đồ chín vàng ươm bởi nghệ, rắc đậu xanh đồ chín tán nhuyễn, hành phi giòn và mỡ hành.",
+    "nguon_goc": "Hà Nội",
+    "nguyen_lieu": [
+      "Gạo nếp",
+      "Đậu xanh",
+      "Nghệ",
+      "Hành khô",
+      "Mỡ lợn",
+      "Muối"
+    ],
+    "cach_thuong_thuc": "Ăn nóng buổi sáng, kèm chả, giò lụa hoặc ruốc. Rưới mỡ hành phi.",
+    "huong_vi": "Dẻo thơm, bùi đậu xanh, béo hành phi",
+    "calo_uoc_tinh": "350 kcal/suất",
+    "dia_chi_noi_tieng": [
+      "Xôi xéo Nguyễn Hữu Huân - Hà Nội",
+      "Xôi xéo chợ Hàng Bè - Hà Nội",
+      "Xôi Yến - 35B Nguyễn Hữu Huân, Hà Nội"
+    ]
+  }
+}

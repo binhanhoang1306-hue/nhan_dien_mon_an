@@ -1,0 +1,393 @@
+{% extends "base.html" %}
+
+{% block title %}Vị Bắc - Một ảnh, một hương vị | Đồ án Nhận diện Món ăn Miền Bắc{% endblock %}
+
+{% block content %}
+<div class="main-wrapper">
+    <!-- ===== HERO SECTION (FIGMA TRANG CHỦ) ===== -->
+    <section class="hero-block">
+        <div class="hero-left-col">
+            <span class="sub-tag-line">— CHẠM VÀO HƯƠNG VỊ QUEN THUỘC</span>
+            <h1 class="hero-main-title">
+                Nhận diện món ăn<br>
+                đặc trưng miền Bắc
+            </h1>
+            <p class="hero-desc-text">
+                Từ một bức ảnh, khám phá tên món và câu chuyện phía sau những hương vị thân quen của miền Bắc.
+            </p>
+            <div class="hero-cta-wrap">
+                <a href="#upload-section" class="btn-vibac">
+                    <i class="bi bi-camera"></i> Bắt đầu nhận diện
+                </a>
+                <div class="hero-sub-hint">
+                    <i class="bi bi-image"></i> Chỉ cần một ảnh món ăn · Tối đa 5MB
+                </div>
+            </div>
+        </div>
+        
+        <div class="hero-right-col">
+            <div class="hero-image-wrap">
+                <img src="{{ url_for('static', filename='img/hero-pho.jpg') }}" alt="Phở bò Hà Nội" class="hero-main-img">
+                <div class="hero-img-badge">TINH HOA TRONG MỘT BÁT PHỞ</div>
+            </div>
+            <div class="hero-img-caption">
+                <span class="hero-img-name">Phở bò Hà Nội</span>
+                <span class="hero-img-loc">Hà Nội · Món nước</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION: MỘT MIỀN, NHIỀU VỊ NHỚ (4 MÓN TIÊU BIỂU) ===== -->
+    <section class="home-dishes-section">
+        <div class="section-home-header">
+            <h2 class="section-home-title">Một miền, nhiều vị nhớ</h2>
+            <a href="{{ url_for('dishes') }}" class="link-arrow">Khám phá danh sách món →</a>
+        </div>
+        
+        <div class="grid-4-dishes">
+            <!-- Phở bò Hà Nội -->
+            <a href="{{ url_for('dish_detail', dish_name='Pho') }}" class="card-dish-mini">
+                <img src="{{ url_for('static', filename='img/dishes/Pho.jpg') }}" alt="Phở bò Hà Nội" class="card-dish-mini-img">
+                <div class="card-dish-mini-title">Phở bò Hà Nội</div>
+                <div class="card-dish-mini-desc">Thanh trong, đậm vị</div>
+            </a>
+            
+            <!-- Bún chả -->
+            <a href="{{ url_for('dish_detail', dish_name='Bun cha') }}" class="card-dish-mini">
+                <img src="{{ url_for('static', filename='img/dishes/Bun cha.jpg') }}" alt="Bún chả" class="card-dish-mini-img">
+                <div class="card-dish-mini-title">Bún chả</div>
+                <div class="card-dish-mini-desc">Thơm hương than hoa</div>
+            </a>
+            
+            <!-- Bánh cuốn -->
+            <a href="{{ url_for('dish_detail', dish_name='Banh cuon') }}" class="card-dish-mini">
+                <img src="{{ url_for('static', filename='img/dishes/Banh cuon.jpg') }}" alt="Bánh cuốn" class="card-dish-mini-img">
+                <div class="card-dish-mini-title">Bánh cuốn</div>
+                <div class="card-dish-mini-desc">Mềm mịn, thơm hành</div>
+            </a>
+            
+            <!-- Chả cá Lã Vọng -->
+            <a href="{{ url_for('dish_detail', dish_name='Cha ca La Vong') }}" class="card-dish-mini">
+                <img src="{{ url_for('static', filename='img/dishes/Cha ca La Vong.jpg') }}" alt="Chả cá Lã Vọng" class="card-dish-mini-img">
+                <div class="card-dish-mini-title">Chả cá Lã Vọng</div>
+                <div class="card-dish-mini-desc">Vàng nghệ, xanh thì là</div>
+            </a>
+        </div>
+    </section>
+
+    <!-- ===== SECTION: TỪ ẢNH CHỤP ĐẾN CÂU CHUYỆN MÓN ĂN (3 BƯỚC) ===== -->
+    <section class="steps-3-section">
+        <h2 class="section-home-title">Từ ảnh chụp đến câu chuyện món ăn</h2>
+        
+        <div class="grid-3-steps">
+            <div class="card-step-box">
+                <span class="step-num-top">01</span>
+                <div class="step-box-icon"><i class="bi bi-image"></i></div>
+                <div class="step-box-title">Tải ảnh lên</div>
+                <p class="step-box-desc">Chọn một bức ảnh món ăn rõ nét từ thiết bị của bạn.</p>
+            </div>
+            
+            <div class="card-step-box">
+                <span class="step-num-top">02</span>
+                <div class="step-box-icon"><i class="bi bi-cpu"></i></div>
+                <div class="step-box-title">Hệ thống nhận diện</div>
+                <p class="step-box-desc">Hình ảnh được phân tích để gợi ý món ăn phù hợp.</p>
+            </div>
+            
+            <div class="card-step-box">
+                <span class="step-num-top">03</span>
+                <div class="step-box-icon"><i class="bi bi-book"></i></div>
+                <div class="step-box-title">Xem thông tin món</div>
+                <p class="step-box-desc">Tìm hiểu nguồn gốc, nguyên liệu và cách thưởng thức.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== UPLOAD & NHẬN DIỆN SECTION (CHUẨN FIGMA) ===== -->
+    <section class="predict-section-wrap mt-5 pt-4" id="upload-section">
+        <div class="text-left mb-4">
+            <span class="sub-tag-line">NHẬN DIỆN / TẢI ẢNH BAN ĐẦU</span>
+            <h2 class="page-title-serif">Món gì trong bức ảnh của bạn?</h2>
+            <p class="page-subtitle-text">Tải ảnh món ăn miền Bắc để khám phá tên gọi và câu chuyện phía sau.</p>
+        </div>
+
+        <div class="card-predict-main">
+            <!-- ===== TRẠNG THÁI 1: KHUNG UPLOAD KÉO THẢ ===== -->
+            <div id="state-upload" class="upload-state-view">
+                <div class="card-top-header">
+                    <span class="card-top-title">Ảnh món ăn</span>
+                    <span class="tag-pill-pink">Tải ảnh ban đầu</span>
+                </div>
+
+                <div class="upload-dashed-box" id="dropArea">
+                    <div class="upload-icon-box">
+                        <i class="bi bi-image"></i>
+                    </div>
+                    <h3 class="upload-headline">Kéo thả ảnh món ăn vào đây</h3>
+                    <p class="upload-subline">Hoặc bấm chọn ảnh từ thiết bị của bạn.</p>
+                    
+                    <input type="file" id="dishFileInput" accept="image/jpeg,image/png,image/webp" style="display: none;">
+                    <button type="button" class="btn-vibac" id="btnBrowseFile">
+                        <i class="bi bi-upload"></i> Chọn ảnh
+                    </button>
+                    
+                    <div class="upload-formats-hint">JPG, PNG, WEBP · Tối đa 5MB</div>
+                </div>
+            </div>
+
+            <!-- ===== TRẠNG THÁI 2: ĐÃ CHỌN ẢNH (PREVIEW SẴN SÀNG) ===== -->
+            <div id="state-selected" class="upload-state-view" style="display: none;">
+                <div class="card-top-header">
+                    <span class="card-top-title">Ảnh bạn đã chọn</span>
+                    <span id="selectedFileSize" class="text-muted" style="font-size: 0.85rem;">2,4 MB</span>
+                </div>
+
+                <div class="preview-box-selected">
+                    <img id="selectedImagePreview" class="img-preview-display" src="" alt="Ảnh xem trước">
+                    
+                    <div class="file-name-under-preview" id="selectedFileName">mon-an.jpg</div>
+                    
+                    <div class="d-flex justify-content-center gap-3 mt-3">
+                        <button type="button" class="btn-vibac" id="btnStartPredict">
+                            <i class="bi bi-search"></i> Nhận diện
+                        </button>
+                        <button type="button" class="btn-vibac-outline" id="btnChangeImage">
+                            <i class="bi bi-arrow-repeat"></i> Chọn ảnh khác
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TRẠNG THÁI 3: ĐANG XỬ LÝ (SPINNER) ===== -->
+            <div id="state-loading" class="upload-state-view" style="display: none;">
+                <div class="card-top-header">
+                    <span class="card-top-title">Đang phân tích hình ảnh</span>
+                    <span class="tag-pill-pink">Đang xử lý</span>
+                </div>
+
+                <div class="preview-box-selected">
+                    <img id="loadingImagePreview" class="img-preview-display" style="opacity: 0.5; filter: blur(1px);" src="" alt="Đang xử lý">
+                    <div class="loading-indicator-box mt-3">
+                        <div class="spinner-vibac"></div>
+                        <div class="loading-title">Đang nhận diện...</div>
+                        <p class="loading-sub">Hệ thống đang trích xuất đặc trưng màu sắc & kết cấu và đối chiếu mô hình Soft Voting...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TRẠNG THÁI 4: KẾT QUẢ THÀNH CÔNG (2 CỘT FIGMA) ===== -->
+            <div id="state-result-success" class="upload-state-view" style="display: none;">
+                <div class="mb-3">
+                    <span class="sub-tag-line">NHẬN DIỆN / KẾT QUẢ THÀNH CÔNG</span>
+                    <h2 class="page-title-serif">Một gợi ý cho bữa ăn của bạn</h2>
+                    <p class="page-subtitle-text">Khám phá hương vị, nguyên liệu và cách thưởng thức món ăn được gợi ý.</p>
+                </div>
+
+                <div class="notice-demo-bar mb-4">
+                    <i class="bi bi-info-circle" style="color: var(--primary-red);"></i>
+                    <span>Kết quả nhận diện được phân tích từ mô hình Soft Voting (SVM + Random Forest) dựa trên đặc trưng màu sắc và kết cấu ảnh.</span>
+                </div>
+                
+                <div class="result-2-col-grid">
+                    <!-- CỘT TRÁI (LEFT COLUMN): ẢNH TẢI LÊN + GỢI Ý PHÙ HỢP NHẤT + TOP 3 -->
+                    <div class="card-result-col-left">
+                        <!-- Card ảnh đã chọn -->
+                        <div class="card-white-sub">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="card-top-title">Ảnh bạn đã chọn</span>
+                                <span id="resUserFileSize" class="text-muted" style="font-size: 0.8rem;">2,4 MB</span>
+                            </div>
+                            <img id="resUserImg" class="img-thumb-left" src="" alt="Ảnh tải lên">
+                            <div id="resUserFileName" class="file-name-under-preview mt-2" style="font-size: 0.8rem;">image.jpg</div>
+                        </div>
+
+                        <!-- Card gợi ý phù hợp nhất -->
+                        <div class="card-white-sub">
+                            <span class="tag-pill-pink mb-2">Gợi ý phù hợp nhất</span>
+                            
+                            <h3 id="resMainDishName" class="result-main-dish-name">Phở bò Hà Nội</h3>
+                            
+                            <div class="result-conf-row">
+                                <span class="text-muted" style="font-size: 0.88rem;">Độ tin cậy của gợi ý</span>
+                                <span id="resConfidenceNum" class="result-conf-number">88%</span>
+                            </div>
+                            
+                            <div class="top3-bar-track">
+                                <div id="resMainBarFill" class="top3-bar-fill-main" style="width: 88%;"></div>
+                            </div>
+                            
+                            <!-- 3 món gợi ý -->
+                            <div class="top3-list-section">
+                                <div class="top3-list-heading">3 MÓN GỢI Ý</div>
+                                <div class="top3-row-item">
+                                    <div class="top3-labels-row">
+                                        <span id="top1NameMini">Phở bò Hà Nội</span>
+                                        <span id="top1PctMini">88%</span>
+                                    </div>
+                                    <div class="top3-sub-track">
+                                        <div id="top1BarMini" class="top3-sub-fill-main" style="width: 88%;"></div>
+                                    </div>
+                                </div>
+                                <div class="top3-row-item">
+                                    <div class="top3-labels-row">
+                                        <span id="top2Name">Bún thang</span>
+                                        <span id="top2Pct">8%</span>
+                                    </div>
+                                    <div class="top3-sub-track">
+                                        <div id="top2Bar" class="top3-sub-fill" style="width: 8%;"></div>
+                                    </div>
+                                </div>
+                                <div class="top3-row-item">
+                                    <div class="top3-labels-row">
+                                        <span id="top3Name">Bún chả</span>
+                                        <span id="top3Pct">4%</span>
+                                    </div>
+                                    <div class="top3-sub-track">
+                                        <div id="top3Bar" class="top3-sub-fill" style="width: 4%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button type="button" class="btn-vibac-outline w-100 mt-4" id="btnResetUpload">
+                                <i class="bi bi-arrow-counterclockwise"></i> Nhận diện ảnh khác
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- CỘT PHẢI (RIGHT COLUMN): CHI TIẾT VĂN HÓA ẨM THỰC CHUẨN FIGMA -->
+                    <div class="card-detail-right">
+                        <img id="resDishCoverImg" class="detail-right-img" src="{{ url_for('static', filename='img/hero-pho.jpg') }}" alt="Món ăn">
+                        
+                        <div class="detail-tags-row">
+                            <span id="resDishTypeTag" class="tag-pill-green">Món nước</span>
+                            <span class="tag-pill-pink">Ẩm thực Hà Nội</span>
+                        </div>
+                        
+                        <h2 id="resDetailTitle" class="detail-dish-title">Phở bò Hà Nội</h2>
+                        <div id="resDishOrigin" class="detail-origin-text">
+                            <i class="bi bi-geo-alt"></i> Nguồn gốc: Hà Nội, miền Bắc Việt Nam
+                        </div>
+                        
+                        <p id="resDishDesc" class="detail-desc-paragraph">
+                            Nước dùng trong, ngọt thanh từ xương bò, thơm quế hồi. Bánh phở mềm quyện cùng thịt bò và hành hoa tạo nên hương vị tinh tế của Hà Nội.
+                        </p>
+                        
+                        <div class="detail-sub-title">NGUYÊN LIỆU CHÍNH</div>
+                        <div id="resIngredientsList" class="ingredients-pills-wrap">
+                            <span class="ingredient-pill">Bánh phở</span>
+                            <span class="ingredient-pill">Thịt bò</span>
+                            <span class="ingredient-pill">Xương bò</span>
+                            <span class="ingredient-pill">Quế, hồi</span>
+                            <span class="ingredient-pill">Hành hoa</span>
+                        </div>
+                        
+                        <div class="detail-sub-title">ĂN SAO CHO ĐÚNG VỊ?</div>
+                        <p id="resServingGuide" class="serving-guide-text">
+                            Thưởng thức khi còn nóng, thêm chanh, ớt hoặc giấm tỏi tùy khẩu vị. Có thể ăn kèm quẩy giòn.
+                        </p>
+                        
+                        <div class="calorie-info-box">
+                            <i class="bi bi-fire" style="font-size: 1.3rem;"></i>
+                            <div>
+                                <div class="calorie-bold">Khoảng <span id="resCalorieVal">400–500 kcal</span> / bát</div>
+                                <p class="calorie-sub">Chỉ ước tính; thay đổi theo khẩu phần và cách nấu.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-footnote">
+                            Mỗi hàng quán có một cách nấu riêng. Hãy xem gợi ý như điểm bắt đầu cho hành trình khám phá.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TRẠNG THÁI 5: ĐỘ TIN CẬY THẤP (CẦN GÓC NHÌN RÕ HƠN) ===== -->
+            <div id="state-result-low-conf" class="upload-state-view" style="display: none;">
+                <div class="mb-3">
+                    <span class="sub-tag-line">NHẬN DIỆN / CẦN XÁC NHẬN</span>
+                    <h2 class="page-title-serif">Cần một góc nhìn rõ hơn</h2>
+                    <p class="page-subtitle-text">Hình ảnh chưa đủ rõ nét để hệ thống đưa ra khẳng định chắc chắn.</p>
+                </div>
+
+                <div class="uncertain-warning-box mb-4">
+                    <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.3rem;"></i>
+                    <div>
+                        Hệ thống không chắc chắn về kết quả này (độ tin cậy thấp). Ảnh có thể bị mờ, góc chụp chưa rõ, hoặc món ăn không nằm trong danh mục 18 món miền Bắc.
+                    </div>
+                </div>
+                
+                <div class="result-2-col-grid">
+                    <div class="card-result-col-left">
+                        <div class="card-white-sub">
+                            <img id="lowUserImg" class="img-thumb-left" src="" alt="Ảnh tải lên">
+                            
+                            <div class="tag-pill-yellow mt-3 mb-2">GỢI Ý GẦN NHẤT</div>
+                            
+                            <h3 id="lowMainDishName" class="result-main-dish-name">Bún chả</h3>
+                            <div class="result-conf-row">
+                                <span class="text-muted" style="font-size: 0.88rem;">Độ tin cậy</span>
+                                <span id="lowConfidenceNum" class="result-conf-number text-muted">24%</span>
+                            </div>
+                            
+                            <div class="top3-bar-track">
+                                <div id="lowMainBarFill" class="top3-bar-fill-main" style="width: 24%; background-color: #8C8075;"></div>
+                            </div>
+                            
+                            <div class="top3-list-section">
+                                <div class="top3-list-heading">CÁC DỰ ĐOÁN KHÁC</div>
+                                <div id="lowTop3ListContainer"></div>
+                            </div>
+                            
+                            <button type="button" class="btn-vibac w-100 mt-3" id="btnResetLow">
+                                <i class="bi bi-arrow-counterclockwise"></i> Thử lại với ảnh khác
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card-white-sub">
+                        <h4 class="serif-font" style="font-size: 1.3rem; margin-bottom: 14px;">Gợi ý để nhận diện chính xác hơn</h4>
+                        <div class="uncertain-desc-text">
+                            <p><strong>Thử lại với ảnh chụp theo các gợi ý sau:</strong></p>
+                            <ul>
+                                <li><strong>Đủ ánh sáng:</strong> Tránh chụp trong tối hoặc ngược sáng che khuất màu sắc món ăn.</li>
+                                <li><strong>Góc chụp chuẩn:</strong> Chụp nghiêng 45° hoặc từ trên xuống (top-down) bao quát đĩa hoặc bát món.</li>
+                                <li><strong>Một món chính:</strong> Tập trung vào một món ăn duy nhất, tránh để nhiều đĩa bát khác nhau cùng lọt vào khung hình.</li>
+                            </ul>
+                        </div>
+                        
+                        <button type="button" class="btn-vibac" id="btnTryAgain">
+                            <i class="bi bi-camera"></i> Chọn ảnh khác ngay
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TRẠNG THÁI 6: THÔNG BÁO LỖI (FILE KHÔNG PHẢI ẢNH / QUÁ 5MB) ===== -->
+            <div id="state-error" class="upload-state-view" style="display: none;">
+                <div class="error-notice-card">
+                    <i class="bi bi-x-circle-fill" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <div class="error-notice-title" id="errTitle">Không thể nhận diện</div>
+                        <div class="error-notice-desc" id="errDesc">Tệp tải lên không hợp lệ hoặc kích thước vượt quá giới hạn 5MB.</div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button type="button" class="btn-vibac-outline" id="btnResetError">
+                        <i class="bi bi-arrow-left"></i> Thử lại với ảnh khác
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mẹo chụp ảnh dưới card (Figma) -->
+        <div class="tip-card-bottom mt-4">
+            <div class="tip-icon">💡</div>
+            <div class="tip-text-wrap">
+                <div class="tip-heading">Một bức ảnh đẹp, một gợi ý tốt hơn</div>
+                <div class="tip-desc">Chụp đủ sáng, lấy nét vào món ăn và chỉ chọn một món chính trong ảnh. Kết quả mang tính tham khảo, không thay thế việc xác nhận món ăn.</div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

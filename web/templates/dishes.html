@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Danh sách Món ăn - Vị Bắc{% endblock %}
+
+{% block content %}
+<div class="main-wrapper">
+    <!-- Header trang danh sách -->
+    <div class="mb-4">
+        <h1 class="serif-font" style="font-size: 2.4rem; margin-bottom: 6px;">Hương vị đất Bắc</h1>
+        <p class="text-muted" style="font-size: 1rem; margin-bottom: 24px;">
+            Khám phá 18 món ăn đặc trưng của ẩm thực đồng bằng Bắc Bộ đã được mô hình AI học nhận diện.
+        </p>
+
+        <!-- Ô tìm kiếm tức thì -->
+        <div class="search-input-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" id="searchDishInput" class="search-field-custom" placeholder="Tìm kiếm theo tên món, nguyên liệu, vùng miền...">
+        </div>
+
+        <!-- Bộ lọc danh mục (Pills) -->
+        <div class="filter-categories-row">
+            <button type="button" class="filter-btn-pill active" data-filter="all">Tất cả (18)</button>
+            <button type="button" class="filter-btn-pill" data-filter="nuoc">Món nước (5)</button>
+            <button type="button" class="filter-btn-pill" data-filter="banh">Bánh (6)</button>
+            <button type="button" class="filter-btn-pill" data-filter="xoi">Xôi & Cơm (2)</button>
+            <button type="button" class="filter-btn-pill" data-filter="chien">Món chiên nướng (5)</button>
+        </div>
+    </div>
+
+    <!-- Grid 18 món ăn chuẩn 4 cột Figma -->
+    <div class="grid-all-dishes" id="dishesGrid">
+        {% for key, dish in dishes.items() %}
+            {# Xác định category cho từng món #}
+            {% set cat = 'khac' %}
+            {% set tag_text = 'Đặc sản' %}
+            {% if key in ['Pho', 'Bun thang', 'Bun rieu', 'Banh da cua', 'Chao long'] %}
+                {% set cat = 'nuoc' %}
+                {% set tag_text = 'Món nước' %}
+            {% elif key in ['Banh cuon', 'Banh chung', 'Banh gio', 'Banh duc', 'Banh gai', 'Banh mi'] %}
+                {% set cat = 'banh' %}
+                {% set tag_text = 'Bánh truyền thống' %}
+            {% elif key in ['Xoi xeo', 'Com rang dua bo'] %}
+                {% set cat = 'xoi' %}
+                {% set tag_text = 'Xôi & Cơm' %}
+            {% elif key in ['Bun cha', 'Cha ca La Vong', 'Banh tom Ho Tay', 'Bun dau mam tom', 'Nem chua'] %}
+                {% set cat = 'chien' %}
+                {% set tag_text = 'Chiên & Nướng' %}
+            {% endif %}
+
+            <div class="card-dish-full" 
+                 data-name="{{ dish.ten_tieng_viet|lower }}" 
+                 data-desc="{{ dish.mo_ta|lower }}" 
+                 data-category="{{ cat }}"
+                 data-key="{{ key }}">
+                <img src="{{ url_for('static', filename='img/dishes/' + key + '.jpg') }}" 
+                     alt="{{ dish.ten_tieng_viet }}" 
+                     class="card-dish-full-img"
+                     onerror="this.src='{{ url_for('static', filename='img/hero-pho.jpg') }}'">
+                <div class="card-dish-full-body">
+                    <span class="card-dish-full-tag">{{ tag_text }} · {{ dish.nguon_goc.split(',')[0] }}</span>
+                    <h3 class="card-dish-full-title">{{ dish.ten_tieng_viet }}</h3>
+                    <p class="card-dish-full-desc">{{ dish.mo_ta[:90] }}...</p>
+                    <a href="{{ url_for('dish_detail', dish_name=key) }}" class="card-dish-full-link">
+                        <span>Khám phá</span>
+                        <span>Xem chi tiết ↗</span>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ===== MODAL POPUP CHI TIẾT MÓN ĂN (FIGMA 215635) ===== -->
+<div class="modal-backdrop-custom" id="dishModalBackdrop">
+    <div class="modal-dialog-custom">
+        <button type="button" class="modal-close-btn" id="modalCloseBtn">✕ Đóng</button>
+        <div id="modalDishBody">
+            <!-- Dynamic dish content -->
+        </div>
+    </div>
+</div>
+{% endblock %}

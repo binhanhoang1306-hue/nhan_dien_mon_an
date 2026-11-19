@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}{{ dish.ten_tieng_viet }} - Chi tiết văn hóa ẩm thực | Vị Bắc{% endblock %}
+
+{% block content %}
+<div class="main-wrapper">
+    <div class="mb-3">
+        <a href="{{ url_for('dishes') }}" class="text-muted text-decoration-none" style="font-size: 0.88rem;">
+            ← Quay lại danh sách 18 món ăn
+        </a>
+    </div>
+
+    <div class="result-2-col-grid" style="grid-template-columns: 420px 1fr; margin-top: 10px;">
+        <!-- CỘT TRÁI: ẢNH ĐẶC TRƯNG + NÚT THỬ NHẬN DIỆN -->
+        <div class="card-result-col-left">
+            <div class="card-white-sub">
+                <img src="{{ url_for('static', filename='img/dishes/' + dish_key + '.jpg') }}" 
+                     alt="{{ dish.ten_tieng_viet }}" 
+                     class="img-thumb-left" 
+                     style="height: 280px;"
+                     onerror="this.src='{{ url_for('static', filename='img/hero-pho.jpg') }}'">
+                
+                <div class="tag-badge tag-red-soft mt-3 mb-2">ĐẶC TRƯNG MIỀN BẮC</div>
+                <h3 class="serif-font" style="font-size: 1.8rem; margin: 4px 0;">{{ dish.ten_tieng_viet }}</h3>
+                <div class="text-muted" style="font-size: 0.85rem; margin-bottom: 20px;">
+                    <i class="bi bi-geo-alt"></i> {{ dish.nguon_goc }}
+                </div>
+                
+                <a href="{{ url_for('index') }}#upload-section" class="btn-vibac w-100 justify-content-center">
+                    <i class="bi bi-camera"></i> Thử nhận diện món này
+                </a>
+            </div>
+        </div>
+
+        <!-- CỘT PHẢI: CHI TIẾT VĂN HÓA, NGUYÊN LIỆU, THƯỞNG THỨC -->
+        <div class="card-detail-right">
+            <div class="detail-tags-row">
+                <span class="tag-badge tag-red-soft">Ẩm thực truyền thống</span>
+                <span class="tag-badge tag-gray-soft">Di sản vị giác</span>
+                <span class="tag-badge tag-gray-soft">📍 {{ dish.nguon_goc.split(',')[0] }}</span>
+            </div>
+
+            <h1 class="detail-dish-title">{{ dish.ten_tieng_viet }}</h1>
+            <div class="detail-origin-text">
+                <i class="bi bi-geo-alt"></i> Nguồn gốc: {{ dish.nguon_goc }}
+            </div>
+
+            <p class="detail-desc-paragraph">
+                {{ dish.mo_ta }}
+            </p>
+
+            <div class="detail-sub-title">NGUYÊN LIỆU CHÍNH</div>
+            <div class="ingredients-pills-wrap">
+                {% for ing in dish.nguyen_lieu %}
+                    <span class="ingredient-pill">{{ ing }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="detail-sub-title">HƯƠNG VỊ ĐẶC TRƯNG</div>
+            <p class="serving-guide-text">{{ dish.huong_vi }}</p>
+
+            <div class="detail-sub-title">ĂN SAO CHO ĐÚNG VỊ?</div>
+            <p class="serving-guide-text">{{ dish.cach_thuong_thuc }}</p>
+
+            {% if dish.dia_chi_noi_tieng %}
+            <div class="detail-sub-title">ĐỊA CHỈ NỔI TIẾNG GỢI Ý</div>
+            <ul style="font-size: 0.88rem; color: var(--text-body); padding-left: 20px; margin-bottom: 24px;">
+                {% for addr in dish.dia_chi_noi_tieng %}
+                    <li style="margin-bottom: 6px;">{{ addr }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            <div class="calorie-info-box">
+                <i class="bi bi-fire" style="font-size: 1.4rem;"></i>
+                <div>
+                    <div class="calorie-bold">Ước tính calo: {{ dish.calo_uoc_tinh }}</div>
+                    <p class="calorie-sub">Năng lượng dinh dưỡng ước tính cho một khẩu phần tiêu chuẩn</p>
+                </div>
+            </div>
+
+            <div class="detail-footnote">
+                💡 Thông tin mang tính tham khảo văn hóa ẩm thực và dinh dưỡng cơ bản.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Giới thiệu - Vị Bắc{% endblock %}
+
+{% block content %}
+<div class="main-wrapper">
+    <!-- Header Giới thiệu -->
+    <section class="about-hero text-center mb-5">
+        <h1 class="serif-font" style="font-size: 2.6rem; margin-bottom: 14px; max-width: 780px; margin-left: auto; margin-right: auto; line-height: 1.25;">
+            Nhìn một món ăn, hiểu thêm một miền văn hóa
+        </h1>
+        <p class="text-muted" style="font-size: 1.05rem; max-width: 680px; margin: 0 auto 36px; line-height: 1.6;">
+            Vị Bắc là đề tài nghiên cứu Khai phá Dữ liệu (Data Mining), kết hợp Machine Learning và tình yêu với ẩm thực truyền thống để nhận diện và gìn giữ tri thức ẩm thực miền Bắc.
+        </p>
+
+        <div style="max-width: 820px; margin: 0 auto; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-card);">
+            <img src="{{ url_for('static', filename='img/hero-banhcuon.jpg') }}" alt="Ẩm thực miền Bắc" style="width: 100%; height: 380px; object-fit: cover; display: block;">
+        </div>
+    </section>
+
+    <!-- Quy trình 4 bước KDD / CRISP-DM -->
+    <section class="mb-5 pt-3">
+        <h2 class="serif-font text-center mb-4" style="font-size: 1.8rem;">Quy trình khai phá dữ liệu</h2>
+        
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card-step-box h-100">
+                    <span class="step-num-top">01</span>
+                    <div class="step-box-icon"><i class="bi bi-images"></i></div>
+                    <div class="step-box-title">Thu thập dữ liệu</div>
+                    <p class="step-box-desc">18 lớp món ăn, hơn 10.000 bức ảnh đa dạng góc chụp từ thực tế, nguồn crawl và bộ dữ liệu ẩm thực Việt Nam.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card-step-box h-100">
+                    <span class="step-num-top">02</span>
+                    <div class="step-box-icon"><i class="bi bi-funnel"></i></div>
+                    <div class="step-box-title">Tiền xử lý</div>
+                    <p class="step-box-desc">Lọc ảnh hỏng, sửa hướng EXIF, chuẩn hóa kích thước 224x224, cân bằng sáng CLAHE và khử nhiễu.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card-step-box h-100">
+                    <span class="step-num-top">03</span>
+                    <div class="step-box-icon"><i class="bi bi-palette"></i></div>
+                    <div class="step-box-title">Trích đặc trưng</div>
+                    <p class="step-box-desc">Kết hợp Color Histogram (HSV/LAB), đặc trưng kết cấu cục bộ (LBP) và đặc trưng hình dạng (HOG 32x32).</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card-step-box h-100">
+                    <span class="step-num-top">04</span>
+                    <div class="step-box-icon"><i class="bi bi-cpu"></i></div>
+                    <div class="step-box-title">Phân lớp ML</div>
+                    <p class="step-box-desc">Huấn luyện mô hình SVM và Random Forest, kết hợp thuật toán Soft Voting Classifier tối ưu hóa độ chính xác.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3 thẻ suy ngẫm văn hóa ẩm thực -->
+    <section class="mb-5">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card-step-box h-100">
+                    <div class="step-box-icon"><i class="bi bi-compass"></i></div>
+                    <div class="step-box-title">Bắt đầu từ miền Bắc</div>
+                    <p class="step-box-desc">
+                        Ẩm thực miền Bắc nổi tiếng với sự thanh tao, hài hòa gia vị và bề dày lịch sử. Hệ thống chọn lọc 18 món ăn đặc sắc nhất của Hà Nội và các vùng lân cận để bắt đầu hành trình số hóa di sản vị giác.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-step-box h-100">
+                    <div class="step-box-icon"><i class="bi bi-heart"></i></div>
+                    <div class="step-box-title">Hiểu món, thêm yêu văn hóa</div>
+                    <p class="step-box-desc">
+                        Mỗi món ăn không chỉ là sự kết hợp của nguyên liệu, mà là cả một câu chuyện về địa lý, tập quán và ký ức của nhiều thế hệ. Nhận diện món ăn là chiếc cầu nối mở ra câu chuyện đó.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-step-box h-100">
+                    <div class="step-box-icon"><i class="bi bi-shield-check"></i></div>
+                    <div class="step-box-title">Gợi ý, không phải khẳng định</div>
+                    <p class="step-box-desc">
+                        Mô hình Machine Learning đưa ra gợi ý dựa trên đặc trưng hình ảnh được học. Khi gặp góc chụp lạ hay đĩa thức ăn chưa rõ nét, hệ thống sẽ khiêm tốn hỏi lại bạn thay vì phán đoán thiếu căn cứ.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ghi chú chân trang đồ án -->
+    <div class="notice-demo-bar text-center justify-content-center my-4">
+        <span>💡 Đồ án môn học Khai phá Dữ liệu (Data Mining) · Bản quyền nội dung © 2026 Vị Bắc</span>
+    </div>
+</div>
+{% endblock %}
