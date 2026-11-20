@@ -4,13 +4,11 @@ web/app.py - FLASK APPLICATION: HỆ THỐNG NHẬN DIỆN MÓN ĂN ĐẶC TRƯN
 Hỗ trợ giao diện Web tương tác cao, thiết kế theo chuẩn bản vẽ Figma/UI.
 """
 
-import os
 import sys
 import json
 import uuid
 import logging
 from pathlib import Path
-from typing import Dict, Any
 
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from werkzeug.utils import secure_filename
@@ -19,11 +17,7 @@ from werkzeug.utils import secure_filename
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
-try:
-    from src.predict import DishPredictor
-except ImportError:
-    # Dự phòng nếu nạp trực tiếp
-    from predict import DishPredictor
+from src.predict import DishPredictor
 
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] [%(levelname)s] %(message)s')
 logger = logging.getLogger(__name__)
@@ -42,7 +36,32 @@ DISHES_INFO_PATH = BASE_DIR / "dishes_info.json"
 dishes_data = {}
 if DISHES_INFO_PATH.exists():
     with open(DISHES_INFO_PATH, 'r', encoding='utf-8') as f:
-        dishes_data = json.load(f)
+        all_dishes_data = json.load(f)
+    dataset_dir = BASE_DIR / "dataset" / "Images"
+    if dataset_dir.is_dir():
+        dataset_classes = {path.name for path in dataset_dir.iterdir() if path.is_dir()}
+        dishes_data = {
+            name: details for name, details in all_dishes_data.items()
+            if name in dataset_classes
+        }
+    else:
+        dishes_data = all_dishes_data
+
+WATER_DISHES = {'Pho', 'Bun thang', 'Bun rieu', 'Banh da cua', 'Chao long'}
+CAKE_DISHES = {'Banh cuon', 'Banh chung', 'Banh gio', 'Banh duc', 'Banh gai', 'Banh mi'}
+RICE_DISHES = {'Xoi xeo', 'Com rang dua bo'}
+GRILLED_DISHES = {'Bun cha', 'Cha ca La Vong', 'Banh tom Ho Tay', 'Bun dau mam tom', 'Nem chua'}
+DISH_COUNTS = {
+    'all': len(dishes_data),
+    'nuoc': sum(name in WATER_DISHES for name in dishes_data),
+    'banh': sum(name in CAKE_DISHES for name in dishes_data),
+    'xoi': sum(name in RICE_DISHES for name in dishes_data),
+    'chien': sum(name in GRILLED_DISHES for name in dishes_data),
+}
+DISH_IMAGE_COUNT = sum(
+    1 for path in (BASE_DIR / "dataset" / "Images").rglob("*")
+    if path.is_file() and path.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp"}
+)
 
 # Khởi tạo mô hình dự đoán duy nhất một lần khi máy chủ khởi động
 logger.info("Đang khởi tạo bộ suy luận DishPredictor...")
@@ -73,7 +92,11 @@ def index():
         # Nếu không có đúng key trên, lấy 4 món đầu tiên
         dishes_sample = dict(list(dishes_data.items())[:4])
         
-    return render_template('index.html', dishes_sample=dishes_sample)
+    return render_template(
+        'index.html',
+        dishes_sample=dishes_sample,
+        total_dishes=len(dishes_data),
+    )
 
 
 @app.route('/predict', methods=['POST'])
@@ -104,27 +127,31 @@ def predict_endpoint():
         if not is_valid:
             return jsonify({'success': False, 'error': msg}), 400
             
-        # Lưu bản sao tạm thời để hiển thị nếu cần
+        # Thực hiện suy luận qua pipeline
+        result = predictor.predict(file_bytes)
+        if not result.get('success'):
+            status_code = 503 if predictor.is_demo_mode else 422
+            return jsonify(result), status_code
+
         filename = secure_filename(file.filename)
         unique_name = f"{uuid.uuid4().hex[:8]}_{filename}"
         save_path = app.config['UPLOAD_FOLDER'] / unique_name
         with open(save_path, 'wb') as f:
             f.write(file_bytes)
-            
-        # Thực hiện suy luận qua pipeline
-        result = predictor.predict(file_bytes)
         result['image_url'] = url_for('static', filename=f"uploads/{unique_name}")
         
         return jsonify(result)
-    except Exception as e:
-        logger.error(f"Lỗi khi xử lý endpoint /predict: {e}")
-        return jsonify({'success': False, 'error': f'Lỗi hệ thống: {str(e)}'}), 500
+    except Exception as error:
+        logger.exception("Lỗi khi xử lý endpoint /predict")
+        return jsonify({'success': False, 'error': f'Lỗi hệ thống: {error}'}), 500
 
 
 @app.route('/dishes')
 def dishes():
-    """Trang danh mục toàn bộ 18 món ăn đặc trưng miền Bắc kèm thanh tìm kiếm tức thì."""
-    return render_template('dishes.html', dishes=dishes_data)
+    """Trang danh mục các lớp món ăn trong dataset."""
+    return render_template(
+        'dishes.html', dishes=dishes_data, dish_counts=DISH_COUNTS
+    )
 
 
 @app.route('/dish/<dish_name>')
@@ -150,13 +177,22 @@ def dish_detail(dish_name: str):
         flash(f"Không tìm thấy thông tin cho món: {dish_name}", "warning")
         return redirect(url_for('dishes'))
         
-    return render_template('dish_detail.html', dish=dish, dish_key=target_key)
+    return render_template(
+        'dish_detail.html',
+        dish=dish,
+        dish_key=target_key,
+        total_dishes=len(dishes_data),
+    )
 
 
 @app.route('/about')
 def about():
-    """Trang giới thiệu đề tài, quy trình CRISP-DM / KDD và mô hình SVM + Random Forest."""
-    return render_template('about.html', total_dishes=len(dishes_data))
+    """Trang giới thiệu đề tài, dữ liệu và pipeline SVM + Random Forest."""
+    return render_template(
+        'about.html',
+        total_dishes=len(dishes_data),
+        total_images=DISH_IMAGE_COUNT,
+    )
 
 
 # ==============================================================================

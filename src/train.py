@@ -34,6 +34,7 @@ from sklearn.model_selection import GridSearchCV, StratifiedKFold, cross_val_sco
 
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] [%(levelname)s] %(message)s')
 logger = logging.getLogger(__name__)
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # ==============================================================================
@@ -264,8 +265,8 @@ def train_stacking_classifier(
 # ==============================================================================
 
 def run_full_training_pipeline(
-    features_dir: str = r"d:\Nhan_dien_mon_an\data\features",
-    models_dir: str = r"d:\Nhan_dien_mon_an\models",
+    features_dir: str = BASE_DIR / "data" / "features",
+    models_dir: str = BASE_DIR / "models",
     quick_mode: bool = False
 ):
     """Nạp ma trận đặc trưng .npy, huấn luyện toàn diện các mô hình và lưu vào thư mục models/."""

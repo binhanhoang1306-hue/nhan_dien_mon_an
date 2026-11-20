@@ -11,6 +11,8 @@ imagehash>=4.3.0
 # Machine Learning
 scikit-learn>=1.3.0
 imbalanced-learn>=0.11.0
+torch>=2.0.0
+torchvision>=0.15.0
 
 # Dữ liệu & Tính toán
 numpy>=1.24.0

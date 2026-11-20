@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from skimage.feature import hog, local_binary_pattern
 
-BASE_DIR = Path(r"d:\Nhan_dien_mon_an")
+BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
 REPORT_FIGS = BASE_DIR / "reports" / "figures"

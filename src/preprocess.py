@@ -36,6 +36,7 @@ logging.basicConfig(
     datefmt='%H:%M:%S'
 )
 logger = logging.getLogger(__name__)
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ==============================================================================
 # 0. CẤU HÌNH NGƯỠNG KIỂM TRA (DỄ DÀNG HIỆU CHỈNH TRƯỚC KHI BẢO VỆ)
@@ -683,8 +684,8 @@ def process_and_augment_dataset(
 # ==============================================================================
 
 def run_full_preprocessing_pipeline(
-    raw_dataset_dir: str = r"d:\Nhan_dien_mon_an\dataset\Images",
-    base_data_dir: str = r"d:\Nhan_dien_mon_an\data"
+    raw_dataset_dir: str = BASE_DIR / "dataset" / "Images",
+    base_data_dir: str = BASE_DIR / "data"
 ):
     """Hàm chạy toàn bộ các bước của Giai đoạn 2 một cách tự động và nhất quán."""
     raw_path = Path(raw_dataset_dir)

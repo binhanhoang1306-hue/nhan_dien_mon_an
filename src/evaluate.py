@@ -38,6 +38,7 @@ from sklearn.model_selection import learning_curve
 
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] [%(levelname)s] %(message)s')
 logger = logging.getLogger(__name__)
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # ==============================================================================
@@ -68,7 +69,7 @@ def plot_and_save_confusion_matrix(
 ):
     """
     Vẽ Heatmap ma trận nhầm lẫn với tỉ lệ phần trăm chuẩn hóa theo hàng (True Labels),
-    kích thước lớn 15x13 để hiển thị rõ 18 lớp món ăn mà không bị đè chữ.
+    kích thước lớn 15x13 để hiển thị rõ các lớp món ăn mà không bị đè chữ.
     """
     cm = confusion_matrix(y_true, y_pred, normalize='true')
     cm_counts = confusion_matrix(y_true, y_pred)
@@ -147,7 +148,7 @@ def plot_multiclass_roc_curves(
     plt.ylim([0.0, 1.05])
     plt.xlabel('Tỉ lệ dương tính giả (False Positive Rate)', fontsize=12)
     plt.ylabel('Tỉ lệ dương tính thật (True Positive Rate)', fontsize=12)
-    plt.title('Đường cong ROC One-vs-Rest cho 18 món ăn miền Bắc', fontsize=15, fontweight='bold', pad=15)
+    plt.title(f'Đường cong ROC One-vs-Rest cho {n_classes} lớp món ăn miền Bắc', fontsize=15, fontweight='bold', pad=15)
     plt.legend(bbox_to_anchor=(1.04, 1), loc="upper left", fontsize=9)
     plt.grid(True, linestyle='--', alpha=0.5)
     plt.tight_layout()
@@ -299,10 +300,10 @@ def perform_mcnemar_test(
 # ==============================================================================
 
 def run_full_evaluation_pipeline(
-    features_dir: str = r"d:\Nhan_dien_mon_an\data\features",
-    models_dir: str = r"d:\Nhan_dien_mon_an\models",
-    splits_dir: str = r"d:\Nhan_dien_mon_an\data\splits",
-    reports_dir: str = r"d:\Nhan_dien_mon_an\reports"
+    features_dir: str = BASE_DIR / "data" / "features",
+    models_dir: str = BASE_DIR / "models",
+    splits_dir: str = BASE_DIR / "data" / "splits",
+    reports_dir: str = BASE_DIR / "reports"
 ):
     """Nạp tất cả các mô hình, chạy đánh giá chi tiết trên tập Test và sinh báo cáo chuẩn bị bảo vệ."""
     feat_path = Path(features_dir)

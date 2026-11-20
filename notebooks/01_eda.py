@@ -4,12 +4,12 @@ notebooks/01_eda.py - GIAI ĐOẠN 1: KHÁM PHÁ VÀ HIỂU BÀI TOÁN, DỮ LI�
 Quy trình CRISP-DM: Data Understanding
 
 Nội dung thực hiện:
-1. Phát biểu bài toán: Phân lớp ảnh đa lớp (18 lớp món ăn miền Bắc Việt Nam).
+1. Phát biểu bài toán: Phân lớp ảnh đa lớp các món ăn miền Bắc Việt Nam.
 2. Thống kê mô tả số lượng ảnh từng lớp, kiểm tra mức độ mất cân bằng (Imbalance Ratio).
 3. Thống kê độ phân giải (Width, Height), tỉ lệ khung hình (Aspect Ratio), dung lượng file.
 4. Thống kê định dạng tệp (JPEG, PNG, WebP) và số lượng kênh màu.
 5. Biểu đồ thanh số lượng ảnh từng lớp và biểu đồ tròn tỉ lệ.
-6. Lưới ảnh mẫu đại diện cho 18 lớp món ăn miền Bắc.
+6. Lưới ảnh mẫu đại diện cho các lớp món ăn miền Bắc.
 7. Thống kê chuyên sâu theo lớp: Độ sáng trung bình (Mean Brightness) và Biểu đồ tần suất màu (HSV Color Histogram) trung bình của từng món.
 """
 
@@ -31,8 +31,9 @@ plt.style.use('seaborn-v0_8-whitegrid' if 'seaborn-v0_8-whitegrid' in plt.style.
 plt.rcParams['font.sans-serif'] = ['DejaVu Sans', 'Arial', 'Segoe UI']
 plt.rcParams['axes.unicode_minus'] = False
 
-DATASET_DIR = Path(r"d:\Nhan_dien_mon_an\dataset\Images")
-REPORT_FIGS = Path(r"d:\Nhan_dien_mon_an\reports\figures")
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATASET_DIR = BASE_DIR / "dataset" / "Images"
+REPORT_FIGS = BASE_DIR / "reports" / "figures"
 REPORT_FIGS.mkdir(parents=True, exist_ok=True)
 
 
@@ -101,7 +102,7 @@ def plot_class_distribution(df: pd.DataFrame):
         pct = (v / len(df)) * 100
         ax.text(v + 15, i, f"{v} ({pct:.1f}%)", va='center', fontweight='bold', fontsize=9)
         
-    plt.title("Phân bố số lượng ảnh qua 18 lớp món ăn miền Bắc", fontsize=15, fontweight='bold', pad=15)
+    plt.title(f"Phân bố số lượng ảnh qua {len(counts)} lớp món ăn miền Bắc", fontsize=15, fontweight='bold', pad=15)
     plt.xlabel("Số lượng ảnh", fontsize=12)
     plt.ylabel("Tên lớp món ăn", fontsize=12)
     plt.xlim(0, max(counts.values) * 1.15)
@@ -114,12 +115,16 @@ def plot_class_distribution(df: pd.DataFrame):
 
 
 def plot_image_grid_samples():
-    """Tạo lưới 3x6 ảnh mẫu đại diện cho toàn bộ 18 lớp món ăn."""
+    """Tạo lưới ảnh mẫu đại diện cho các lớp trong dataset."""
     class_dirs = sorted([d for d in DATASET_DIR.iterdir() if d.is_dir()])
-    fig, axes = plt.subplots(3, 6, figsize=(18, 9))
+    if not class_dirs:
+        raise ValueError(f"Không tìm thấy lớp ảnh trong {DATASET_DIR}")
+    columns = min(6, len(class_dirs))
+    rows = (len(class_dirs) + columns - 1) // columns
+    fig, axes = plt.subplots(rows, columns, figsize=(columns * 3, rows * 3))
     axes = axes.flatten()
     
-    for idx, c_dir in enumerate(class_dirs[:18]):
+    for idx, c_dir in enumerate(class_dirs):
         imgs = list(c_dir.glob("*.jpg")) + list(c_dir.glob("*.jpeg")) + list(c_dir.glob("*.png"))
         if imgs:
             img_bgr = cv2.imread(str(imgs[0]))
@@ -129,7 +134,9 @@ def plot_image_grid_samples():
                 axes[idx].set_title(c_dir.name, fontsize=10, fontweight='bold')
         axes[idx].axis('off')
         
-    plt.suptitle("Lưới ảnh mẫu đại diện 18 món ăn đặc trưng miền Bắc", fontsize=16, fontweight='bold', y=0.98)
+    for ax in axes[len(class_dirs):]:
+        ax.axis('off')
+    plt.suptitle(f"Lưới ảnh mẫu đại diện {len(class_dirs)} lớp món ăn", fontsize=16, fontweight='bold', y=0.98)
     plt.tight_layout()
     save_path = REPORT_FIGS / "01_eda_sample_grid.png"
     plt.savefig(save_path, dpi=150)

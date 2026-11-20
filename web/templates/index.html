@@ -203,7 +203,7 @@
 
                 <div class="notice-demo-bar mb-4">
                     <i class="bi bi-info-circle" style="color: var(--primary-red);"></i>
-                    <span>Kết quả nhận diện được phân tích từ mô hình Soft Voting (SVM + Random Forest) dựa trên đặc trưng màu sắc và kết cấu ảnh.</span>
+                    <span>Kết quả nhận diện dùng pipeline MobileNetV2 + HSV, kết hợp SVM và Random Forest bằng Soft Voting.</span>
                 </div>
                 
                 <div class="result-2-col-grid">
@@ -330,7 +330,7 @@
                 <div class="uncertain-warning-box mb-4">
                     <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.3rem;"></i>
                     <div>
-                        Đây là dự đoán gần nhất, không phải kết luận chắc chắn. Ảnh có thể bị mờ, góc chụp chưa rõ, hoặc món ăn không nằm trong danh mục 18 món miền Bắc.
+                        Đây là dự đoán gần nhất, không phải kết luận chắc chắn. Ảnh có thể bị mờ, góc chụp chưa rõ, hoặc món ăn không nằm trong danh mục {{ total_dishes }} món miền Bắc.
                     </div>
                 </div>
                 

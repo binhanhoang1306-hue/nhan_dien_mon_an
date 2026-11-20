@@ -37,6 +37,7 @@ from sklearn.pipeline import Pipeline
 
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] [%(levelname)s] %(message)s')
 logger = logging.getLogger(__name__)
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # ==============================================================================
@@ -307,9 +308,9 @@ def visualize_feature_space_2d(
 # ==============================================================================
 
 def run_feature_pipeline(
-    base_data_dir: str = r"d:\Nhan_dien_mon_an\data",
-    models_dir: str = r"d:\Nhan_dien_mon_an\models",
-    reports_dir: str = r"d:\Nhan_dien_mon_an\reports\figures",
+    base_data_dir: str = BASE_DIR / "data",
+    models_dir: str = BASE_DIR / "models",
+    reports_dir: str = BASE_DIR / "reports" / "figures",
     sample_limit_train: Optional[int] = None
 ):
     """Chạy trọn gói quá trình trích đặc trưng và chuẩn bị vector cho bước Modeling."""
@@ -376,7 +377,7 @@ def run_feature_pipeline(
     visualize_feature_space_2d(
         X_test_pca2, y_test, idx_to_class, 
         reports_path / "feature_pca_2d.png", 
-        title="Trực quan hóa không gian đặc trưng 18 món ăn qua PCA 2D (Test Set)"
+        title=f"Trực quan hóa không gian đặc trưng {len(idx_to_class)} lớp qua PCA 2D (Test Set)"
     )
     
     # t-SNE (lấy tối đa 1000 mẫu để vẽ mượt)

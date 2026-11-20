@@ -24,7 +24,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 
-BASE_DIR = Path(r"d:\Nhan_dien_mon_an")
+BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
 from src.preprocess import (

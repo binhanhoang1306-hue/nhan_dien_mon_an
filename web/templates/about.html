@@ -28,7 +28,7 @@
                     <span class="step-num-top">01</span>
                     <div class="step-box-icon"><i class="bi bi-images"></i></div>
                     <div class="step-box-title">Thu thập dữ liệu</div>
-                    <p class="step-box-desc">18 lớp món ăn, hơn 10.000 bức ảnh đa dạng góc chụp từ thực tế, nguồn crawl và bộ dữ liệu ẩm thực Việt Nam.</p>
+                    <p class="step-box-desc">{{ total_dishes }} lớp món ăn với {{ "{:,}".format(total_images) }} ảnh trong dataset hiện tại.</p>
                 </div>
             </div>
             <div class="col-md-3">
@@ -44,7 +44,7 @@
                     <span class="step-num-top">03</span>
                     <div class="step-box-icon"><i class="bi bi-palette"></i></div>
                     <div class="step-box-title">Trích đặc trưng</div>
-                    <p class="step-box-desc">Kết hợp Color Histogram (HSV/LAB), đặc trưng kết cấu cục bộ (LBP) và đặc trưng hình dạng (HOG 32x32).</p>
+                    <p class="step-box-desc">MobileNetV2 trích xuất đặc trưng ảnh, kết hợp histogram màu HSV. HSV + HOG + LBP + GLCM được giữ làm baseline để đối chiếu.</p>
                 </div>
             </div>
             <div class="col-md-3">
@@ -66,7 +66,7 @@
                     <div class="step-box-icon"><i class="bi bi-compass"></i></div>
                     <div class="step-box-title">Bắt đầu từ miền Bắc</div>
                     <p class="step-box-desc">
-                        Ẩm thực miền Bắc nổi tiếng với sự thanh tao, hài hòa gia vị và bề dày lịch sử. Hệ thống chọn lọc 18 món ăn đặc sắc nhất của Hà Nội và các vùng lân cận để bắt đầu hành trình số hóa di sản vị giác.
+                        Ẩm thực miền Bắc nổi tiếng với sự thanh tao, hài hòa gia vị và bề dày lịch sử. Hệ thống hiện nhận diện {{ total_dishes }} món thuộc các lớp có trong dataset.
                     </p>
                 </div>
             </div>

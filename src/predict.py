@@ -1,84 +1,48 @@
 # -*- coding: utf-8 -*-
-"""
-src/predict.py - SUY LUẬN NHẬN DIỆN MÓN ĂN VỚI MÔ HÌNH HYBRID DEEP FEATURES
-Độ chính xác Top-1: 80.83% | Top-3: 94.30%
-Trích xuất MobileNetV2 (1280D) + Color Histogram HSV (96D) -> StandardScaler -> Soft Voting (SVM + RF)
-"""
+"""Inference for the production MobileNetV2 + HSV food classifier."""
 
 import io
-import sys
-import time
 import json
 import logging
+import pickle
+import time
 from pathlib import Path
-from typing import Dict, Any, Tuple, Optional, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
-import cv2
-import numpy as np
-import torch
-import torchvision.models as models
-import torchvision.transforms as transforms
-from PIL import Image, ImageOps
 import joblib
+import numpy as np
+from PIL import Image, ImageOps
 
-logging.basicConfig(level=logging.INFO, format='[%(asctime)s] [%(levelname)s] %(message)s')
+from src.production_features import (
+    FEATURE_CONFIG,
+    MobileNetV2FeatureExtractor,
+    extract_hybrid_features,
+    preprocess_image,
+)
+
 logger = logging.getLogger(__name__)
-
-
-class MobileNetInferenceExtractor:
-    """Bộ trích đặc trưng ngữ nghĩa MobileNetV2 phục vụ suy luận."""
-    def __init__(self, device='cpu'):
-        self.device = torch.device(device)
-        weights = models.MobileNet_V2_Weights.DEFAULT
-        self.model = models.mobilenet_v2(weights=weights)
-        self.model.classifier = torch.nn.Identity()
-        self.model.eval()
-        self.model.to(self.device)
-        
-        self.transform = transforms.Compose([
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-        ])
-
-    @torch.no_grad()
-    def extract(self, pil_img: Image.Image) -> np.ndarray:
-        tensor = self.transform(pil_img).unsqueeze(0).to(self.device)
-        feat = self.model(tensor)
-        return feat.cpu().numpy().flatten().astype(np.float32)
-
-
-def extract_color_features(pil_img: Image.Image) -> np.ndarray:
-    """Trích đặc trưng màu HSV 96 chiều."""
-    img_rgb = np.array(pil_img.resize((224, 224)))
-    hsv = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2HSV)
-    h_hist = cv2.normalize(cv2.calcHist([hsv], [0], None, [32], [0, 180]), None, norm_type=cv2.NORM_L1).flatten()
-    s_hist = cv2.normalize(cv2.calcHist([hsv], [1], None, [32], [0, 256]), None, norm_type=cv2.NORM_L1).flatten()
-    v_hist = cv2.normalize(cv2.calcHist([hsv], [2], None, [32], [0, 256]), None, norm_type=cv2.NORM_L1).flatten()
-    return np.hstack([h_hist, s_hist, v_hist]).astype(np.float32)
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 class DishPredictor:
-    """Bộ dự đoán món ăn độ chính xác cao (Hybrid MobileNetV2 + SVM/RF)."""
+    """Loads the trained feature pipeline and selected classifier for inference."""
+
     def __init__(
         self,
-        models_dir: Union[str, Path] = r"d:\Nhan_dien_mon_an\models",
-        splits_dir: Union[str, Path] = r"d:\Nhan_dien_mon_an\data\splits",
-        dishes_info_path: Union[str, Path] = r"d:\Nhan_dien_mon_an\dishes_info.json",
-        preferred_model: str = "SoftVoting"
+        models_dir: Union[str, Path] = BASE_DIR / "models",
+        splits_dir: Union[str, Path] = BASE_DIR / "data" / "splits",
+        dishes_info_path: Union[str, Path] = BASE_DIR / "dishes_info.json",
+        preferred_model: str = "SoftVoting",
     ):
         self.models_dir = Path(models_dir)
         self.splits_dir = Path(splits_dir)
         self.dishes_info_path = Path(dishes_info_path)
-
         self.model = None
-        self.scaler = None
-        self.extractor = MobileNetInferenceExtractor(device='cpu')
+        self.feature_pipeline = None
+        self.feature_extractor = None
         self.idx_to_class: Dict[int, str] = {}
-        self.class_to_idx: Dict[str, int] = {}
         self.dishes_info: Dict[str, Any] = {}
-        self.is_demo_mode = False
+        self.is_demo_mode = True
 
         self._load_dishes_info()
         self._load_label_map()
@@ -86,153 +50,166 @@ class DishPredictor:
 
     def _load_dishes_info(self):
         if self.dishes_info_path.exists():
-            with open(self.dishes_info_path, 'r', encoding='utf-8') as f:
-                self.dishes_info = json.load(f)
-            logger.info(f"Đã nạp thông tin cho {len(self.dishes_info)} món ăn")
+            with self.dishes_info_path.open("r", encoding="utf-8") as file:
+                self.dishes_info = json.load(file)
 
     def _load_label_map(self):
-        lm_file = self.splits_dir / "label_map.json"
-        if lm_file.exists():
-            with open(lm_file, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-            self.class_to_idx = data.get('class_to_idx', {})
-            self.idx_to_class = {int(k): v for k, v in data.get('idx_to_class', {}).items()}
-            logger.info(f"Đã nạp label_map.json ({len(self.idx_to_class)} lớp)")
+        label_map_file = self.splits_dir / "label_map.json"
+        if not label_map_file.exists():
+            logger.warning("Chưa tìm thấy label map: %s", label_map_file)
+            return
+
+        with label_map_file.open("r", encoding="utf-8") as file:
+            data = json.load(file)
+        self.idx_to_class = {
+            int(index): name for index, name in data.get("idx_to_class", {}).items()
+        }
 
     def _load_model(self, preferred_model: str):
-        scaler_path = self.models_dir / "hybrid_scaler.joblib"
+        pipeline_path = self.models_dir / "feature_pipeline.joblib"
+        feature_config_path = self.models_dir / "feature_config.json"
+        feature_weights_path = self.models_dir / "mobilenet_v2_features.pt"
         model_path = self.models_dir / f"{preferred_model}.joblib"
-
         if not model_path.exists():
-            for alt in ["SVM", "RandomForest"]:
-                alt_p = self.models_dir / f"{alt}.joblib"
-                if alt_p.exists():
-                    model_path = alt_p
-                    break
+            model_path = self.models_dir / "SVM.joblib"
 
-        if model_path.exists() and scaler_path.exists():
-            try:
-                self.scaler = joblib.load(scaler_path)
-                self.model = joblib.load(model_path)
-                logger.info(f"✅ NẠP THÀNH CÔNG MÔ HÌNH HYBRID: {model_path.name}")
-                self.is_demo_mode = False
-            except Exception as e:
-                logger.error(f"Lỗi nạp mô hình Hybrid: {e}")
-                self.is_demo_mode = True
-        else:
-            logger.warning("Chưa tìm thấy mô hình Hybrid, chuyển về chế độ dự phòng.")
-            self.is_demo_mode = True
+        if (
+            not self.idx_to_class
+            or not pipeline_path.is_file()
+            or not model_path.is_file()
+            or not feature_config_path.is_file()
+            or not feature_weights_path.is_file()
+        ):
+            logger.warning(
+                "Mô hình chưa sẵn sàng; cần feature pipeline, cấu hình MobileNetV2 + HSV, "
+                "trọng số trích đặc trưng, %s và label_map.json.",
+                model_path.name,
+            )
+            return
+
+        try:
+            with feature_config_path.open("r", encoding="utf-8") as file:
+                feature_config = json.load(file)
+            if feature_config != FEATURE_CONFIG:
+                logger.error(
+                    "Cấu hình đặc trưng không tương thích: %s", feature_config_path
+                )
+                return
+            self.feature_pipeline = joblib.load(pipeline_path)
+            self.model = joblib.load(model_path)
+            self.feature_extractor = MobileNetV2FeatureExtractor(
+                weights_path=feature_weights_path
+            )
+        except (
+            OSError,
+            EOFError,
+            ImportError,
+            AttributeError,
+            ValueError,
+            RuntimeError,
+            TypeError,
+            pickle.UnpicklingError,
+        ):
+            logger.exception("Không thể nạp mô hình từ %s", self.models_dir)
+            self.feature_pipeline = None
+            self.model = None
+            self.feature_extractor = None
+            return
+
+        self.is_demo_mode = False
+        logger.info("Đã nạp pipeline và mô hình: %s", model_path.name)
 
     def validate_image(self, file_bytes) -> Tuple[bool, str]:
         try:
-            if isinstance(file_bytes, (bytes, bytearray)):
-                img = Image.open(io.BytesIO(file_bytes))
-            else:
-                img = Image.open(file_bytes)
-            fmt = (img.format or "").lower()
-            if fmt not in ('jpeg', 'jpg', 'png', 'webp'):
-                return False, "Vui lòng tải lên ảnh JPG, PNG hoặc WebP."
+            with Image.open(io.BytesIO(file_bytes)) as image:
+                if (image.format or "").lower() not in ("jpeg", "jpg", "png", "webp"):
+                    return False, "Vui lòng tải lên ảnh JPG, PNG hoặc WebP."
             return True, "OK"
-        except Exception:
+        except (OSError, ValueError):
             return False, "Tệp không phải hình ảnh hợp lệ."
 
     def _read_pil_image(self, image_input) -> Optional[Image.Image]:
         try:
             if isinstance(image_input, (str, Path)):
-                pil_img = Image.open(str(image_input))
+                image = Image.open(image_input)
             elif isinstance(image_input, (bytes, bytearray)):
-                pil_img = Image.open(io.BytesIO(image_input))
+                image = Image.open(io.BytesIO(image_input))
             else:
-                pil_img = Image.open(image_input)
-            pil_img = ImageOps.exif_transpose(pil_img)
-            if pil_img.mode != 'RGB':
-                pil_img = pil_img.convert('RGB')
-            return pil_img
-        except Exception as e:
-            logger.error(f"Lỗi mở ảnh: {e}")
+                image = Image.open(image_input)
+            with image:
+                return ImageOps.exif_transpose(image).convert("RGB")
+        except (OSError, ValueError):
+            logger.exception("Không thể đọc ảnh đầu vào")
             return None
 
     def predict(self, image_input) -> Dict[str, Any]:
-        t0 = time.time()
-        pil_img = self._read_pil_image(image_input)
-        if pil_img is None:
-            return {'success': False, 'error': 'Không thể giải mã dữ liệu ảnh.'}
+        started_at = time.time()
+        pil_image = self._read_pil_image(image_input)
+        if pil_image is None:
+            return {"success": False, "error": "Không thể giải mã dữ liệu ảnh."}
 
-        if self.is_demo_mode or self.model is None or self.scaler is None:
-            return {'success': False, 'error': 'Mô hình chưa sẵn sàng.'}
+        if (
+            self.is_demo_mode
+            or self.model is None
+            or self.feature_pipeline is None
+            or self.feature_extractor is None
+        ):
+            return {
+                "success": False,
+                "error": "Mô hình chưa sẵn sàng. Hãy huấn luyện mô hình trước khi nhận diện.",
+            }
 
         try:
-            # 1. Trích xuất Deep Features (1280D) + Color Features (96D)
-            deep_feat = self.extractor.extract(pil_img)
-            color_feat = extract_color_features(pil_img)
-            hybrid_raw = np.hstack([deep_feat, color_feat]).reshape(1, -1)
+            enhanced_rgb = preprocess_image(pil_image)
+            feature_vector = extract_hybrid_features(
+                enhanced_rgb, self.feature_extractor
+            ).reshape(1, -1)
+            transformed = self.feature_pipeline.transform(feature_vector)
 
-            # 2. Chuẩn hóa StandardScaler
-            hybrid_scaled = self.scaler.transform(hybrid_raw)
-
-            # 3. Suy luận xác suất từ mô hình Soft Voting Ensemble
             if hasattr(self.model, "predict_proba"):
-                probs = self.model.predict_proba(hybrid_scaled)[0]
+                probabilities = self.model.predict_proba(transformed)[0]
+                class_indices = self.model.classes_
             else:
-                pred_idx = self.model.predict(hybrid_scaled)[0]
-                probs = np.zeros(len(self.idx_to_class))
-                probs[pred_idx] = 1.0
+                prediction = int(self.model.predict(transformed)[0])
+                class_indices = np.asarray([prediction])
+                probabilities = np.asarray([1.0])
 
-            # 4. Tính toán Top 3
-            top_indices = np.argsort(probs)[::-1][:3]
+            ranked = np.argsort(probabilities)[::-1][:3]
             top3 = []
-            for idx in top_indices:
-                cls_name = self.idx_to_class.get(int(idx), f"Class_{idx}")
-                prob = float(probs[idx])
-                info = self._get_dish_info(cls_name)
-                display_name = info.get('ten_tieng_viet', cls_name)
-                pct = f"{prob * 100:.0f}%"
+            for position in ranked:
+                class_index = int(class_indices[position])
+                class_name = self.idx_to_class.get(class_index, f"Class_{class_index}")
+                probability = float(probabilities[position])
+                dish_info = self._get_dish_info(class_name)
                 top3.append({
-                    'dish': display_name,
-                    'class': cls_name,
-                    'probability': prob,
-                    'confidence_pct': pct
+                    "dish": dish_info.get("ten_tieng_viet", class_name),
+                    "class": class_name,
+                    "probability": probability,
+                    "confidence_pct": f"{probability * 100:.0f}%",
                 })
 
-            best_idx = int(top_indices[0])
-            best_class = self.idx_to_class.get(best_idx, "Unknown")
-            best_conf = float(probs[best_idx])
-            best_info = self._get_dish_info(best_class)
-            display_name = best_info.get('ten_tieng_viet', best_class)
-
-            elapsed = time.time() - t0
-            logger.info(f"Dự đoán chuẩn xác: {display_name} ({best_conf * 100:.1f}%) trong {elapsed:.3f}s")
-
+            best = top3[0]
+            elapsed = time.time() - started_at
             return {
-                'success': True,
-                'dish_name': display_name,
-                'dish_key': best_class,
-                'confidence': best_conf,
-                'is_confident': best_conf >= 0.50,
-                'top3': top3,
-                'dish_info': best_info,
-                'processing_time': round(elapsed, 3),
-                'mode': 'deep_hybrid_production'
+                "success": True,
+                "dish_name": best["dish"],
+                "dish_key": best["class"],
+                "confidence": best["probability"],
+                "is_confident": best["probability"] >= 0.50,
+                "top3": top3,
+                "dish_info": self._get_dish_info(best["class"]),
+                "processing_time": round(elapsed, 3),
+                "mode": "mobilenetv2_hsv",
             }
-        except Exception as e:
-            logger.error(f"Lỗi suy luận: {e}")
-            return {'success': False, 'error': f'Lỗi phân tích: {str(e)}'}
+        except (OSError, ValueError, RuntimeError, AttributeError) as error:
+            logger.exception("Lỗi suy luận ảnh")
+            return {"success": False, "error": f"Lỗi phân tích: {error}"}
 
     def _get_dish_info(self, class_name: str) -> Dict[str, Any]:
         if class_name in self.dishes_info:
             return self.dishes_info[class_name]
-        for k, v in self.dishes_info.items():
-            if k.lower().replace(" ", "_") == class_name.lower().replace(" ", "_"):
-                return v
-            if k.lower() == class_name.lower():
-                return v
-        return {
-            'ten_tieng_viet': class_name,
-            'mo_ta': 'Món ăn đặc sản truyền thống của vùng đất Bắc Bộ.',
-            'nguon_goc': 'Đồng bằng Bắc Bộ',
-            'nguyen_lieu': ['Nguyên liệu tươi ngon'],
-            'cach_thuong_thuc': 'Thưởng thức khi còn nóng.',
-            'huong_vi': 'Hài hòa, đậm đà',
-            'calo_uoc_tinh': '350 - 500 kcal',
-            'dia_chi_noi_tieng': []
-        }
+        normalized_name = class_name.lower().replace(" ", "_")
+        for key, info in self.dishes_info.items():
+            if key.lower().replace(" ", "_") == normalized_name:
+                return info
+        return {"ten_tieng_viet": class_name}

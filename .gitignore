@@ -4,3 +4,9 @@ __pycache__/
 data/
 *.npy
 *.joblib
+models/*.pt
+models/feature_config.json
+models/training_times.json
+web/static/uploads/*
+!web/static/uploads/.gitkeep
+reports/*.csv

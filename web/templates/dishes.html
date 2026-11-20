@@ -8,7 +8,7 @@
     <div class="mb-4">
         <h1 class="serif-font" style="font-size: 2.4rem; margin-bottom: 6px;">Hương vị đất Bắc</h1>
         <p class="text-muted" style="font-size: 1rem; margin-bottom: 24px;">
-            Khám phá 18 món ăn đặc trưng của ẩm thực đồng bằng Bắc Bộ đã được mô hình AI học nhận diện.
+            Khám phá {{ dishes|length }} lớp món ăn mà mô hình AI được huấn luyện nhận diện.
         </p>
 
         <!-- Ô tìm kiếm tức thì -->
@@ -19,15 +19,15 @@
 
         <!-- Bộ lọc danh mục (Pills) -->
         <div class="filter-categories-row">
-            <button type="button" class="filter-btn-pill active" data-filter="all">Tất cả (18)</button>
-            <button type="button" class="filter-btn-pill" data-filter="nuoc">Món nước (5)</button>
-            <button type="button" class="filter-btn-pill" data-filter="banh">Bánh (6)</button>
-            <button type="button" class="filter-btn-pill" data-filter="xoi">Xôi & Cơm (2)</button>
-            <button type="button" class="filter-btn-pill" data-filter="chien">Món chiên nướng (5)</button>
+            <button type="button" class="filter-btn-pill active" data-filter="all">Tất cả ({{ dish_counts.all }})</button>
+            <button type="button" class="filter-btn-pill" data-filter="nuoc">Món nước ({{ dish_counts.nuoc }})</button>
+            <button type="button" class="filter-btn-pill" data-filter="banh">Bánh ({{ dish_counts.banh }})</button>
+            <button type="button" class="filter-btn-pill" data-filter="xoi">Xôi & Cơm ({{ dish_counts.xoi }})</button>
+            <button type="button" class="filter-btn-pill" data-filter="chien">Món chiên nướng ({{ dish_counts.chien }})</button>
         </div>
     </div>
 
-    <!-- Grid 18 món ăn chuẩn 4 cột Figma -->
+    <!-- Mỗi thẻ tương ứng một lớp có trong dataset -->
     <div class="grid-all-dishes" id="dishesGrid">
         {% for key, dish in dishes.items() %}
             {# Xác định category cho từng món #}

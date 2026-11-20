@@ -32,7 +32,7 @@ from sklearn.metrics import classification_report, accuracy_score, f1_score
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] [%(levelname)s] %(message)s')
 logger = logging.getLogger(__name__)
 
-BASE_DIR = Path(r"d:\Nhan_dien_mon_an")
+BASE_DIR = Path(__file__).resolve().parent
 RAW_DATA_DIR = BASE_DIR / "dataset" / "Images"
 MODELS_DIR = BASE_DIR / "models"
 SPLITS_DIR = BASE_DIR / "data" / "splits"
