@@ -155,7 +155,7 @@ h1, h2, h3, h4, h5, .serif-font {
     color: var(--text-muted);
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
 }
 
 /* ================= FOOTER (CHUẨN FIGMA) ================= */
@@ -1139,24 +1139,26 @@ h1, h2, h3, h4, h5, .serif-font {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: 6px;
     color: inherit;
     text-decoration: none;
 }
 
 .card-dish-link-explore {
     display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
-    gap: 7px;
+    gap: 4px;
     color: var(--primary-red);
-    font-size: 0.78rem;
+    font-size: 0.68rem;
     font-weight: 600;
+    white-space: nowrap;
     transition: color 0.2s ease;
 }
 
 .card-dish-link-explore i {
-    width: 28px;
-    height: 28px;
+    width: 22px;
+    height: 22px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1167,15 +1169,16 @@ h1, h2, h3, h4, h5, .serif-font {
 
 .card-dish-link-detail {
     display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    gap: 7px;
-    padding: 8px 13px;
+    gap: 4px;
+    padding: 6px 7px;
     border-radius: var(--radius-pill);
     background: var(--primary-red);
     box-shadow: 0 3px 8px rgba(143, 55, 37, 0.16);
     color: #fff;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     font-weight: 600;
     white-space: nowrap;
     transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
