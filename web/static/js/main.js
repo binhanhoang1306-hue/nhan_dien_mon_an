@@ -22,15 +22,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnResetLow = document.getElementById('btnResetLow');
     const btnTryAgain = document.getElementById('btnTryAgain');
     const btnResetError = document.getElementById('btnResetError');
+    const editorCanvas = document.getElementById('editorCanvas');
+    const btnCropImage = document.getElementById('btnCropImage');
+    const btnRotateLeft = document.getElementById('btnRotateLeft');
+    const btnRotateRight = document.getElementById('btnRotateRight');
+    const btnResetEdit = document.getElementById('btnResetEdit');
+    const editorStatus = document.getElementById('editorStatus');
 
     // Previews
-    const selectedImgPreview = document.getElementById('selectedImagePreview');
     const loadingImgPreview = document.getElementById('loadingImagePreview');
     const selectedFileName = document.getElementById('selectedFileName');
     const selectedFileSize = document.getElementById('selectedFileSize');
 
     let currentFile = null;
+    let originalFile = null;
     let currentPreviewUrl = '';
+    let editorImage = null;
+    let selectionRect = null;
+    let dragStart = null;
+    const sourceCanvas = document.createElement('canvas');
+    const sourceContext = sourceCanvas.getContext('2d');
+    const editorContext = editorCanvas ? editorCanvas.getContext('2d') : null;
 
     // Switch states
     function showState(targetState) {
@@ -58,6 +70,67 @@ document.addEventListener('DOMContentLoaded', () => {
         showState(stateError);
     }
 
+    function renderEditor() {
+        if (!editorContext || !sourceCanvas.width || !sourceCanvas.height) return;
+        editorCanvas.width = sourceCanvas.width;
+        editorCanvas.height = sourceCanvas.height;
+        editorContext.clearRect(0, 0, editorCanvas.width, editorCanvas.height);
+        editorContext.drawImage(sourceCanvas, 0, 0);
+
+        if (selectionRect) {
+            const { x, y, width, height } = selectionRect;
+            editorContext.fillStyle = 'rgba(0, 0, 0, 0.45)';
+            editorContext.fillRect(0, 0, editorCanvas.width, y);
+            editorContext.fillRect(0, y + height, editorCanvas.width, editorCanvas.height - y - height);
+            editorContext.fillRect(0, y, x, height);
+            editorContext.fillRect(x + width, y, editorCanvas.width - x - width, height);
+            editorContext.save();
+            editorContext.setLineDash([8, 5]);
+            editorContext.lineWidth = Math.max(2, editorCanvas.width / 500);
+            editorContext.strokeStyle = '#fff';
+            editorContext.strokeRect(x, y, width, height);
+            editorContext.restore();
+        }
+    }
+
+    function loadEditorImage(file, isOriginal) {
+        const nextUrl = URL.createObjectURL(file);
+        const previousUrl = currentPreviewUrl;
+        const image = new Image();
+        image.onload = () => {
+            if (currentPreviewUrl !== nextUrl) {
+                URL.revokeObjectURL(nextUrl);
+                return;
+            }
+
+            editorImage = image;
+            const scale = Math.min(1, 1800 / Math.max(image.naturalWidth, image.naturalHeight));
+            sourceCanvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+            sourceCanvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+            sourceContext.clearRect(0, 0, sourceCanvas.width, sourceCanvas.height);
+            sourceContext.drawImage(image, 0, 0, sourceCanvas.width, sourceCanvas.height);
+            selectionRect = null;
+            renderEditor();
+            if (loadingImgPreview) loadingImgPreview.src = nextUrl;
+            if (selectedFileName) selectedFileName.textContent = currentFile.name;
+            if (selectedFileSize) selectedFileSize.textContent = formatFileSize(currentFile.size);
+            if (editorStatus) editorStatus.textContent = 'Kéo trên ảnh để chọn vùng cần giữ lại.';
+            if (btnCropImage) btnCropImage.disabled = true;
+            showState(stateSelected);
+            if (previousUrl) URL.revokeObjectURL(previousUrl);
+        };
+        image.onerror = () => {
+            URL.revokeObjectURL(nextUrl);
+            currentPreviewUrl = '';
+            triggerError('Không thể mở ảnh', 'Tệp ảnh bị lỗi hoặc trình duyệt không thể đọc được ảnh này.');
+        };
+
+        currentFile = file;
+        if (isOriginal) originalFile = file;
+        currentPreviewUrl = nextUrl;
+        image.src = nextUrl;
+    }
+
     function handleSelectedFile(file) {
         if (!file) return;
 
@@ -78,18 +151,37 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        currentFile = file;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            currentPreviewUrl = e.target.result;
-            if (selectedImgPreview) selectedImgPreview.src = currentPreviewUrl;
-            if (loadingImgPreview) loadingImgPreview.src = currentPreviewUrl;
-            if (selectedFileName) selectedFileName.textContent = file.name;
-            if (selectedFileSize) selectedFileSize.textContent = formatFileSize(file.size);
-            
-            showState(stateSelected);
-        };
-        reader.readAsDataURL(file);
+        loadEditorImage(file, true);
+    }
+
+    function canvasToJpegFile(canvas, name) {
+        return new Promise((resolve, reject) => {
+            canvas.toBlob((blob) => {
+                if (!blob) {
+                    reject(new Error('Không thể xử lý ảnh trên trình duyệt.'));
+                    return;
+                }
+                if (blob.size > 5 * 1024 * 1024) {
+                    reject(new Error('Ảnh sau khi chỉnh sửa vượt quá giới hạn 5MB.'));
+                    return;
+                }
+                const baseName = name.replace(/\.[^.]+$/, '') || 'anh-mon-an';
+                resolve(new File([blob], `${baseName}.jpg`, {
+                    type: 'image/jpeg',
+                    lastModified: Date.now()
+                }));
+            }, 'image/jpeg', 0.9);
+        });
+    }
+
+    async function applyEditedCanvas(canvas) {
+        if (!currentFile) return;
+        try {
+            const editedFile = await canvasToJpegFile(canvas, currentFile.name);
+            loadEditorImage(editedFile, false);
+        } catch (error) {
+            if (editorStatus) editorStatus.textContent = error.message;
+        }
     }
 
     // Browse click
@@ -139,11 +231,111 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function canvasPoint(event) {
+        const bounds = editorCanvas.getBoundingClientRect();
+        return {
+            x: Math.max(0, Math.min(editorCanvas.width, (event.clientX - bounds.left) * editorCanvas.width / bounds.width)),
+            y: Math.max(0, Math.min(editorCanvas.height, (event.clientY - bounds.top) * editorCanvas.height / bounds.height))
+        };
+    }
+
+    if (editorCanvas) {
+        editorCanvas.addEventListener('pointerdown', (event) => {
+            if (!editorImage) return;
+            event.preventDefault();
+            dragStart = canvasPoint(event);
+            selectionRect = { x: dragStart.x, y: dragStart.y, width: 0, height: 0 };
+            editorCanvas.setPointerCapture(event.pointerId);
+            renderEditor();
+        });
+
+        editorCanvas.addEventListener('pointermove', (event) => {
+            if (!dragStart) return;
+            const point = canvasPoint(event);
+            selectionRect = {
+                x: Math.min(dragStart.x, point.x),
+                y: Math.min(dragStart.y, point.y),
+                width: Math.abs(point.x - dragStart.x),
+                height: Math.abs(point.y - dragStart.y)
+            };
+            renderEditor();
+        });
+
+        editorCanvas.addEventListener('pointerup', () => {
+            if (!dragStart) return;
+            dragStart = null;
+            const hasSelection = selectionRect && selectionRect.width >= 10 && selectionRect.height >= 10;
+            if (!hasSelection) selectionRect = null;
+            if (btnCropImage) btnCropImage.disabled = !hasSelection;
+            if (editorStatus) {
+                editorStatus.textContent = hasSelection
+                    ? 'Đã chọn vùng ảnh. Nhấn “Áp dụng cắt” để sử dụng vùng này.'
+                    : 'Vùng chọn quá nhỏ. Hãy kéo để chọn vùng ảnh lớn hơn.';
+            }
+            renderEditor();
+        });
+
+        editorCanvas.addEventListener('pointercancel', () => {
+            dragStart = null;
+            selectionRect = null;
+            if (btnCropImage) btnCropImage.disabled = true;
+            renderEditor();
+        });
+    }
+
+    if (btnCropImage) {
+        btnCropImage.addEventListener('click', () => {
+            if (!selectionRect || !sourceCanvas.width) return;
+            const cropCanvas = document.createElement('canvas');
+            cropCanvas.width = Math.round(selectionRect.width);
+            cropCanvas.height = Math.round(selectionRect.height);
+            const cropContext = cropCanvas.getContext('2d');
+            cropContext.drawImage(
+                sourceCanvas,
+                selectionRect.x, selectionRect.y, selectionRect.width, selectionRect.height,
+                0, 0, cropCanvas.width, cropCanvas.height
+            );
+            applyEditedCanvas(cropCanvas);
+        });
+    }
+
+    function rotateImage(direction) {
+        if (!sourceCanvas.width) return;
+        const rotatedCanvas = document.createElement('canvas');
+        rotatedCanvas.width = sourceCanvas.height;
+        rotatedCanvas.height = sourceCanvas.width;
+        const context = rotatedCanvas.getContext('2d');
+        if (direction === 'left') {
+            context.translate(0, rotatedCanvas.height);
+            context.rotate(-Math.PI / 2);
+        } else {
+            context.translate(rotatedCanvas.width, 0);
+            context.rotate(Math.PI / 2);
+        }
+        context.drawImage(sourceCanvas, 0, 0);
+        applyEditedCanvas(rotatedCanvas);
+    }
+
+    if (btnRotateLeft) btnRotateLeft.addEventListener('click', () => rotateImage('left'));
+    if (btnRotateRight) btnRotateRight.addEventListener('click', () => rotateImage('right'));
+    if (btnResetEdit) {
+        btnResetEdit.addEventListener('click', () => {
+            if (originalFile) loadEditorImage(originalFile, true);
+        });
+    }
+
     // Reset buttons
     [btnChangeImage, btnResetUpload, btnResetLow, btnTryAgain, btnResetError].forEach(btn => {
         if (btn) {
             btn.addEventListener('click', () => {
                 currentFile = null;
+                originalFile = null;
+                editorImage = null;
+                selectionRect = null;
+                sourceCanvas.width = 0;
+                sourceCanvas.height = 0;
+                if (currentPreviewUrl) URL.revokeObjectURL(currentPreviewUrl);
+                currentPreviewUrl = '';
                 if (fileInput) fileInput.value = '';
                 showState(stateUpload);
             });
@@ -302,16 +494,46 @@ document.addEventListener('DOMContentLoaded', () => {
                 data.top3.forEach(item => {
                     const row = document.createElement('div');
                     row.className = 'top3-row-item';
-                    row.innerHTML = `
-                        <div class="top3-labels-row">
-                            <span>${item.dish}</span>
-                            <span>${item.confidence_pct}</span>
-                        </div>
-                        <div class="top3-sub-track">
-                            <div class="top3-sub-fill" style="width: ${item.confidence_pct};"></div>
-                        </div>
-                    `;
+                    const labels = document.createElement('div');
+                    labels.className = 'top3-labels-row';
+                    const dishName = document.createElement('span');
+                    dishName.textContent = item.dish;
+                    const percentage = document.createElement('span');
+                    percentage.textContent = item.confidence_pct;
+                    labels.append(dishName, percentage);
+
+                    const track = document.createElement('div');
+                    track.className = 'top3-sub-track';
+                    const fill = document.createElement('div');
+                    fill.className = 'top3-sub-fill';
+                    fill.style.width = item.confidence_pct;
+                    track.appendChild(fill);
+                    row.append(labels, track);
                     lowTop3ListContainer.appendChild(row);
+                });
+            }
+
+            const dishInfo = data.dish_info || {};
+            const lowDetailTitle = document.getElementById('lowDetailTitle');
+            const lowDishOrigin = document.getElementById('lowDishOrigin');
+            const lowDishDesc = document.getElementById('lowDishDesc');
+            const lowIngredientsList = document.getElementById('lowIngredientsList');
+            const lowServingGuide = document.getElementById('lowServingGuide');
+            const lowCalorieVal = document.getElementById('lowCalorieVal');
+            if (lowDetailTitle) lowDetailTitle.textContent = data.dish_name || 'Món ăn được dự đoán';
+            if (lowDishOrigin) lowDishOrigin.textContent = `Nguồn gốc: ${dishInfo.nguon_goc || dishInfo.origin || 'Đồng bằng Bắc Bộ'}`;
+            if (lowDishDesc) lowDishDesc.textContent = dishInfo.mo_ta || dishInfo.description || 'Món ăn truyền thống đậm đà bản sắc vùng đất Bắc.';
+            if (lowServingGuide) lowServingGuide.textContent = dishInfo.cach_thuong_thuc || dishInfo.eating_guide || 'Thưởng thức khi còn nóng kèm các loại gia vị đặc trưng.';
+            if (lowCalorieVal) lowCalorieVal.textContent = dishInfo.calo_uoc_tinh || dishInfo.calories || '400 - 500 kcal';
+            if (lowIngredientsList) {
+                lowIngredientsList.replaceChildren();
+                const ingredients = dishInfo.nguyen_lieu || dishInfo.ingredients || ['Gia vị truyền thống'];
+                const list = Array.isArray(ingredients) ? ingredients : ingredients.split(',');
+                list.forEach((ingredient) => {
+                    const pill = document.createElement('span');
+                    pill.className = 'ingredient-pill';
+                    pill.textContent = ingredient.trim();
+                    lowIngredientsList.appendChild(pill);
                 });
             }
 

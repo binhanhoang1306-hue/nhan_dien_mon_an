@@ -60,9 +60,13 @@
                     <span class="card-dish-full-tag">{{ tag_text }} · {{ dish.nguon_goc.split(',')[0] }}</span>
                     <h3 class="card-dish-full-title">{{ dish.ten_tieng_viet }}</h3>
                     <p class="card-dish-full-desc">{{ dish.mo_ta[:90] }}...</p>
-                    <a href="{{ url_for('dish_detail', dish_name=key) }}" class="card-dish-full-link">
-                        <span>Khám phá</span>
-                        <span>Xem chi tiết ↗</span>
+                    <a href="{{ url_for('dish_detail', dish_name=key) }}" class="card-dish-full-link" aria-label="Khám phá {{ dish.ten_tieng_viet }} và xem chi tiết">
+                        <span class="card-dish-link-explore">
+                            <i class="bi bi-compass"></i> Khám phá
+                        </span>
+                        <span class="card-dish-link-detail">
+                            Xem chi tiết <i class="bi bi-arrow-up-right"></i>
+                        </span>
                     </a>
                 </div>
             </div>

@@ -41,7 +41,9 @@
     <section class="home-dishes-section">
         <div class="section-home-header">
             <h2 class="section-home-title">Một miền, nhiều vị nhớ</h2>
-            <a href="{{ url_for('dishes') }}" class="link-arrow">Khám phá danh sách món →</a>
+            <a href="{{ url_for('dishes') }}" class="link-arrow">
+                Khám phá danh sách món <i class="bi bi-arrow-up-right"></i>
+            </a>
         </div>
         
         <div class="grid-4-dishes">
@@ -135,15 +137,31 @@
                 </div>
             </div>
 
-            <!-- ===== TRẠNG THÁI 2: ĐÃ CHỌN ẢNH (PREVIEW SẴN SÀNG) ===== -->
+            <!-- ===== TRẠNG THÁI 2: CHỈNH SỬA ẢNH TRƯỚC KHI NHẬN DIỆN ===== -->
             <div id="state-selected" class="upload-state-view" style="display: none;">
                 <div class="card-top-header">
-                    <span class="card-top-title">Ảnh bạn đã chọn</span>
+                    <span class="card-top-title">Chỉnh sửa ảnh của bạn</span>
                     <span id="selectedFileSize" class="text-muted" style="font-size: 0.85rem;">2,4 MB</span>
                 </div>
 
                 <div class="preview-box-selected">
-                    <img id="selectedImagePreview" class="img-preview-display" src="" alt="Ảnh xem trước">
+                    <canvas id="editorCanvas" class="image-editor-canvas" aria-label="Kéo trên ảnh để chọn vùng cần cắt"></canvas>
+                    <p class="editor-help-text">Kéo trên ảnh để chọn vùng muốn giữ lại. Nếu không cần cắt, bạn có thể nhận diện ngay.</p>
+                    <div class="image-editor-toolbar">
+                        <button type="button" class="btn-vibac-outline" id="btnCropImage" disabled>
+                            <i class="bi bi-crop"></i> Áp dụng cắt
+                        </button>
+                        <button type="button" class="btn-vibac-outline" id="btnRotateLeft">
+                            <i class="bi bi-arrow-counterclockwise"></i> Xoay trái
+                        </button>
+                        <button type="button" class="btn-vibac-outline" id="btnRotateRight">
+                            <i class="bi bi-arrow-clockwise"></i> Xoay phải
+                        </button>
+                        <button type="button" class="btn-vibac-outline" id="btnResetEdit">
+                            <i class="bi bi-arrow-repeat"></i> Khôi phục ảnh gốc
+                        </button>
+                    </div>
+                    <div id="editorStatus" class="editor-status" aria-live="polite"></div>
                     
                     <div class="file-name-under-preview" id="selectedFileName">mon-an.jpg</div>
                     
@@ -301,18 +319,18 @@
                 </div>
             </div>
 
-            <!-- ===== TRẠNG THÁI 5: ĐỘ TIN CẬY THẤP (CẦN GÓC NHÌN RÕ HƠN) ===== -->
+            <!-- ===== TRẠNG THÁI 5: ĐỘ TIN CẬY THẤP ===== -->
             <div id="state-result-low-conf" class="upload-state-view" style="display: none;">
                 <div class="mb-3">
                     <span class="sub-tag-line">NHẬN DIỆN / CẦN XÁC NHẬN</span>
-                    <h2 class="page-title-serif">Cần một góc nhìn rõ hơn</h2>
-                    <p class="page-subtitle-text">Hình ảnh chưa đủ rõ nét để hệ thống đưa ra khẳng định chắc chắn.</p>
+                    <h2 class="page-title-serif">Thông tin món ăn tham khảo</h2>
+                    <p class="page-subtitle-text">Độ tin cậy còn thấp, nhưng bạn vẫn có thể xem thông tin của món được dự đoán gần nhất.</p>
                 </div>
 
                 <div class="uncertain-warning-box mb-4">
                     <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.3rem;"></i>
                     <div>
-                        Hệ thống không chắc chắn về kết quả này (độ tin cậy thấp). Ảnh có thể bị mờ, góc chụp chưa rõ, hoặc món ăn không nằm trong danh mục 18 món miền Bắc.
+                        Đây là dự đoán gần nhất, không phải kết luận chắc chắn. Ảnh có thể bị mờ, góc chụp chưa rõ, hoặc món ăn không nằm trong danh mục 18 món miền Bắc.
                     </div>
                 </div>
                 
@@ -344,17 +362,28 @@
                         </div>
                     </div>
                     
-                    <div class="card-white-sub">
-                        <h4 class="serif-font" style="font-size: 1.3rem; margin-bottom: 14px;">Gợi ý để nhận diện chính xác hơn</h4>
-                        <div class="uncertain-desc-text">
-                            <p><strong>Thử lại với ảnh chụp theo các gợi ý sau:</strong></p>
-                            <ul>
-                                <li><strong>Đủ ánh sáng:</strong> Tránh chụp trong tối hoặc ngược sáng che khuất màu sắc món ăn.</li>
-                                <li><strong>Góc chụp chuẩn:</strong> Chụp nghiêng 45° hoặc từ trên xuống (top-down) bao quát đĩa hoặc bát món.</li>
-                                <li><strong>Một món chính:</strong> Tập trung vào một món ăn duy nhất, tránh để nhiều đĩa bát khác nhau cùng lọt vào khung hình.</li>
-                            </ul>
+                    <div class="card-detail-right">
+                        <div class="detail-tags-row">
+                            <span class="tag-pill-yellow">Thông tin tham khảo</span>
                         </div>
-                        
+                        <h2 id="lowDetailTitle" class="detail-dish-title">Món ăn được dự đoán</h2>
+                        <div id="lowDishOrigin" class="detail-origin-text"></div>
+                        <p id="lowDishDesc" class="detail-desc-paragraph"></p>
+                        <div class="detail-sub-title">NGUYÊN LIỆU CHÍNH</div>
+                        <div id="lowIngredientsList" class="ingredients-pills-wrap"></div>
+                        <div class="detail-sub-title">ĂN SAO CHO ĐÚNG VỊ?</div>
+                        <p id="lowServingGuide" class="serving-guide-text"></p>
+                        <div class="calorie-info-box">
+                            <i class="bi bi-fire" style="font-size: 1.3rem;"></i>
+                            <div>
+                                <div class="calorie-bold">Khoảng <span id="lowCalorieVal">400 - 500 kcal</span></div>
+                                <p class="calorie-sub">Chỉ ước tính; thay đổi theo khẩu phần và cách nấu.</p>
+                            </div>
+                        </div>
+                        <div class="detail-footnote">Gợi ý này có thể chưa chính xác khi độ tin cậy thấp.</div>
+                        <div class="uncertain-desc-text">
+                            <p><strong>Muốn thử nhận diện lại?</strong> Cắt sát món ăn hoặc chọn ảnh có đủ sáng, chỉ tập trung vào một món.</p>
+                        </div>
                         <button type="button" class="btn-vibac" id="btnTryAgain">
                             <i class="bi bi-camera"></i> Chọn ảnh khác ngay
                         </button>
