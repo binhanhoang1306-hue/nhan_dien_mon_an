@@ -8,6 +8,7 @@ import json
 import time
 import logging
 import csv
+import hashlib
 from pathlib import Path
 
 import numpy as np
@@ -40,6 +41,60 @@ MODELS_DIR.mkdir(parents=True, exist_ok=True)
 SPLITS_DIR.mkdir(parents=True, exist_ok=True)
 FEATURES_DIR.mkdir(parents=True, exist_ok=True)
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+
+
+IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp"}
+
+
+def collect_training_items(raw_data_dir):
+    """Collect all unique images, excluding exact duplicates with conflicting labels."""
+    image_paths_by_class = {
+        directory.name: sorted(
+            path for path in directory.iterdir()
+            if path.is_file() and path.suffix.lower() in IMAGE_SUFFIXES
+        )
+        for directory in sorted(raw_data_dir.iterdir())
+        if directory.is_dir()
+    }
+    classes = [
+        class_name for class_name, paths in image_paths_by_class.items() if paths
+    ]
+    class_to_idx = {class_name: index for index, class_name in enumerate(classes)}
+
+    images_by_digest = {}
+    for class_name in classes:
+        for path in image_paths_by_class[class_name]:
+            try:
+                digest = hashlib.sha256(path.read_bytes()).digest()
+            except OSError:
+                logger.warning("Không thể đọc ảnh để kiểm tra trùng lặp: %s", path, exc_info=True)
+                continue
+            images_by_digest.setdefault(digest, []).append(
+                (str(path), class_to_idx[class_name])
+            )
+
+    items = []
+    duplicate_count = 0
+    conflicting_image_count = 0
+    for duplicate_group in images_by_digest.values():
+        labels = {label for _, label in duplicate_group}
+        if len(labels) > 1:
+            conflicting_image_count += len(duplicate_group)
+            logger.warning(
+                "Loại ảnh trùng có nhãn mâu thuẫn: %s",
+                [path for path, _ in duplicate_group],
+            )
+            continue
+        items.append(duplicate_group[0])
+        duplicate_count += len(duplicate_group) - 1
+
+    logger.info(
+        "Loại %s bản trùng cùng nhãn và %s ảnh thuộc nhóm trùng khác nhãn.",
+        duplicate_count,
+        conflicting_image_count,
+    )
+    return classes, class_to_idx, items
+
 
 def extract_dataset_features(items, feature_extractor, batch_size=32):
     """Extract primary and baseline features from the same valid image set."""
@@ -158,13 +213,9 @@ def main():
     if not RAW_DATA_DIR.is_dir():
         raise FileNotFoundError(f"Không tìm thấy dataset: {RAW_DATA_DIR}")
 
-    classes = sorted(
-        directory.name for directory in RAW_DATA_DIR.iterdir() if directory.is_dir()
-    )
+    classes, class_to_idx, items = collect_training_items(RAW_DATA_DIR)
     if len(classes) < 2:
         raise ValueError(f"Cần ít nhất 2 lớp ảnh để huấn luyện, chỉ tìm thấy {len(classes)}.")
-
-    class_to_idx = {cls: i for i, cls in enumerate(classes)}
     idx_to_class = {i: cls for i, cls in enumerate(classes)}
 
     label_map_data = {
@@ -175,34 +226,23 @@ def main():
         json.dump(label_map_data, f, ensure_ascii=False, indent=2)
     logger.info(f"Đã lưu label_map.json cho {len(classes)} lớp: {classes}")
 
-    items = []
-    rng = np.random.default_rng(42)
-    max_per_class = 500
-
-    for cls in classes:
-        cls_dir = RAW_DATA_DIR / cls
-        files = sorted(
-            path for path in cls_dir.iterdir()
-            if path.is_file() and path.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp"}
-        )
-        if not files:
-            logger.warning("Bỏ qua lớp không có ảnh hợp lệ: %s", cls)
-            continue
-        if len(files) > max_per_class:
-            selected = [files[index] for index in rng.choice(
-                len(files), size=max_per_class, replace=False
-            )]
-        else:
-            selected = files
-
-        label = class_to_idx[cls]
-        for f in selected:
-            items.append((str(f), label))
-
     logger.info(f"Tổng số ảnh đưa vào huấn luyện: {len(items)}")
 
     if len({label for _, label in items}) < 2:
         raise ValueError("Dataset phải có ít nhất hai lớp chứa ảnh hợp lệ.")
+    samples_per_class = np.bincount(
+        [label for _, label in items], minlength=len(classes)
+    )
+    underrepresented_classes = [
+        classes[index]
+        for index, sample_count in enumerate(samples_per_class)
+        if sample_count < 2
+    ]
+    if underrepresented_classes:
+        raise ValueError(
+            "Cần ít nhất 2 ảnh duy nhất mỗi lớp để chia train/test: "
+            + ", ".join(underrepresented_classes)
+        )
 
     logger.info("Đang khởi tạo bộ trích đặc trưng MobileNetV2...")
     t0 = time.time()

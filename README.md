@@ -25,7 +25,7 @@ python notebooks\05_evaluation.py
 python web\app.py
 ```
 
-Huấn luyện tải pretrained weights MobileNetV2 ImageNet nếu chưa có trong cache, rồi tạo `models/`, `data/features/`, `data/splits/` và các báo cáo CSV trong `reports/`. Các thư mục này được bỏ qua bởi Git. Trên máy mới, hãy chạy huấn luyện trước khi dùng chức năng nhận diện; nếu chưa có model, web vẫn mở được nhưng API trả lỗi dịch vụ chưa sẵn sàng thay vì trả kết quả giả.
+Huấn luyện tải pretrained weights MobileNetV2 ImageNet nếu chưa có trong cache, dùng toàn bộ ảnh hợp lệ, loại bản trùng chính xác và bỏ các ảnh trùng nhưng mang nhãn mâu thuẫn; sau đó tạo `models/`, `data/features/`, `data/splits/` và các báo cáo CSV trong `reports/`. Các thư mục này được bỏ qua bởi Git. Trên máy mới, hãy chạy huấn luyện trước khi dùng chức năng nhận diện; nếu chưa có model, web vẫn mở được nhưng API trả lỗi dịch vụ chưa sẵn sàng thay vì trả kết quả giả.
 
 ## Thực nghiệm và biểu đồ
 
